@@ -1,5 +1,7 @@
 package com.rental_management.entities;
 
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,4 +19,6 @@ public class Property {
     private int numberOfBathrooms;
     private int maximumOccupancy;
     private List<String> amenities;
+    //@ManyToOne
+    private Promotion promotion;
 }

@@ -9,6 +9,9 @@ import java.util.List;
 @Setter
 public class User {
     private Long id;
+    private String userName;
+    private String userLastname;
+    private String email;
     private Date startDate;
     private Date endDate;
     private double discountAmount;

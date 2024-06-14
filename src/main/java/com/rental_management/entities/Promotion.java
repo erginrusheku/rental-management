@@ -1,9 +1,12 @@
 package com.rental_management.entities;
 
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
+
 @Getter
 @Setter
 public class Promotion {
@@ -12,6 +15,6 @@ public class Promotion {
     private Date endDate;
     private double discountAmount;
     private String offerDetails;
-    private Promotion promotion;
-    private Property property;
+    //@OneToMany
+    private List<Property> properties;
 }
