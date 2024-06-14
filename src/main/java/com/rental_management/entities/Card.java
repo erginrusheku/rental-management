@@ -1,5 +1,6 @@
 package com.rental_management.entities;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,8 +8,11 @@ import java.util.Date;
 
 @Getter
 @Setter
+@Entity
 public class Card {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cardId;
     private String cardholderName;
     private String cardNumber; // Encrypted for security
@@ -19,6 +23,7 @@ public class Card {
     private boolean isDefaultCard;
     private Date creationDate;
     private Date lastUpdatedDate;
+    @ManyToOne
     private User user;
     // Role to be added
 }
