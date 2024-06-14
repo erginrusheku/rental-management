@@ -1,9 +1,50 @@
 package com.rental_management.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.rental_management.dto.PropertyDTO;
+import com.rental_management.service.PropertyService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/properties")
 public class PropertyController {
+
+    private final PropertyService propertyService;
+
+    public PropertyController(PropertyService propertyService) {
+        this.propertyService = propertyService;
+    }
+
+    @GetMapping("/all")
+    ResponseEntity<List<PropertyDTO>> getAllProperties(){
+        List<PropertyDTO> propertyList = propertyService.getAllProperties();
+        return new ResponseEntity<>(propertyList, HttpStatus.OK);
+    }
+
+    @PostMapping("/create")
+    ResponseEntity<PropertyDTO> createProperty(@RequestBody PropertyDTO propertyDTO){
+        PropertyDTO property = propertyService.createProperty(propertyDTO);
+        return new ResponseEntity<>(property, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/propertyId/{propertyId}")
+    ResponseEntity<PropertyDTO> getPropertyById(@PathVariable Long propertyId){
+        PropertyDTO propertyIds = propertyService.getPropertyById(propertyId);
+        return new ResponseEntity<>(propertyIds, HttpStatus.OK);
+    }
+
+    @PutMapping("/updateProperty/{propertyId}")
+    ResponseEntity<PropertyDTO> updateProperty(@PathVariable Long propertyId, @RequestBody PropertyDTO propertyDTO){
+        PropertyDTO propertyAndId = propertyService.updateProperty(propertyId,propertyDTO);
+        return new ResponseEntity<>(propertyAndId, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deletePropertyId/{propertyId}")
+    ResponseEntity<Void> deletePropertyById(@PathVariable Long propertyId){
+        propertyService.deletePropertyById(propertyId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

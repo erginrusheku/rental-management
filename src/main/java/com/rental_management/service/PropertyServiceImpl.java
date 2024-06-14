@@ -13,7 +13,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
 
     @Override
-    public List<PropertyDTO> getAllProperties(PropertyDTO propertyDTO) {
+    public List<PropertyDTO> getAllProperties() {
         return null;
     }
 

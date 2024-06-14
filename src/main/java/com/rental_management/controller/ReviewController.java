@@ -1,4 +1,50 @@
 package com.rental_management.controller;
 
+import com.rental_management.dto.ReviewDTO;
+import com.rental_management.service.ReviewService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/reviews")
 public class ReviewController {
+
+    private final ReviewService reviewService;
+
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
+    @GetMapping("/all")
+    ResponseEntity <List<ReviewDTO>> getAllReviews(){
+        List<ReviewDTO> reviewList = reviewService.getAllReview();
+        return new ResponseEntity<>(reviewList, HttpStatus.OK);
+    }
+
+    @PostMapping("/create")
+    ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO reviewDTO){
+        ReviewDTO review = reviewService.createReview(reviewDTO);
+        return new ResponseEntity<>(review,HttpStatus.CREATED);
+    }
+
+    @GetMapping("/reviewId/{reviewId}")
+    ResponseEntity<ReviewDTO> getById(@PathVariable Long reviewId){
+        ReviewDTO reviewIds = reviewService.getById(reviewId);
+        return new ResponseEntity<>(reviewIds, HttpStatus.OK);
+    }
+
+    @PutMapping({"/updateReview/{reviewId}"})
+    ResponseEntity<ReviewDTO> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO){
+        ReviewDTO reviewAndId = reviewService.updateReview(reviewId,reviewDTO);
+        return new ResponseEntity<>(reviewAndId, HttpStatus.OK);
+    }
+
+    @DeleteMapping("deleteReviewId/{reviewId}")
+    ResponseEntity<Void> deleteById(@PathVariable Long reviewId){
+        reviewService.deleteReview(reviewId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
