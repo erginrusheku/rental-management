@@ -1,7 +1,11 @@
 package com.rental_management.entities;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Date;
+@Getter
+@Setter
 public class Promotion {
     private Long id;
     private Date startDate;
