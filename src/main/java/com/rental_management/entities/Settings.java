@@ -11,5 +11,6 @@ public class Settings {
     private int maxOccupancy;
     private int minStayDuration;
     private Property property;
+    private CancellationPolicy cancellationPolicy;
 
 }
