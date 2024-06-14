@@ -11,7 +11,6 @@ public class PropertyDTO {
     private String description;
     private String type;
     private String location;
-    private double pricePerNight;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
     private int maximumOccupancy;

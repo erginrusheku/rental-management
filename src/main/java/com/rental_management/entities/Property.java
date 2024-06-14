@@ -17,7 +17,6 @@ public class Property {
     private double pricePerNight;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
-    private int maximumOccupancy;
     private List<String> amenities;
     //@ManyToOne
     private Promotion promotion;
