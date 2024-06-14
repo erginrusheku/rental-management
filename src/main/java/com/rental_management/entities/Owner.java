@@ -11,7 +11,7 @@ public class Owner {
     private Long id;
     private String name;
     private int phoneNumber;
-    private Property property;
+    private List<Property> property;
     private List<Message> sentMessages;
     private List<Message> receivedMessages;
 }
