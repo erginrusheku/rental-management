@@ -1,0 +1,50 @@
+package com.rental_management.controller;
+
+import com.rental_management.dto.OwnerDTO;
+import com.rental_management.service.OwnerService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/owners")
+public class OwnerController {
+
+    private final OwnerService ownerService;
+
+    public OwnerController(OwnerService ownerService) {
+        this.ownerService = ownerService;
+    }
+
+    @GetMapping("/ownerId/{ownerId}")
+    ResponseEntity<OwnerDTO> getOwnerById(@PathVariable Long ownerId){
+        OwnerDTO ownerIds = ownerService.getOwnerById(ownerId);
+        return new ResponseEntity<>(ownerIds, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    ResponseEntity<List<OwnerDTO>> getAllOwners(){
+        List<OwnerDTO> owners = ownerService.getAllOwners();
+        return new ResponseEntity<>(owners, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/create")
+    ResponseEntity<OwnerDTO> createOwner(@RequestBody OwnerDTO ownerDTO){
+        OwnerDTO createdOwner = ownerService.createOwner(ownerDTO);
+        return new ResponseEntity<>(createdOwner, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/updateOwnerId/{ownerId}")
+    ResponseEntity<OwnerDTO> updateOwner(@PathVariable Long ownerId,@RequestBody OwnerDTO ownerDTO){
+        OwnerDTO updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
+        return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteOwnerId/{ownerId}")
+    ResponseEntity<Void> deleteOwner(@PathVariable Long ownerId){
+        ownerService.deleteOwnerById(ownerId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
