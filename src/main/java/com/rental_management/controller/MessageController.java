@@ -30,7 +30,7 @@ public class MessageController {
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{messageId}")
+    @GetMapping("/messageId/{messageId}")
     ResponseEntity<MessageDTO> getById(@PathVariable Long messageId){
         MessageDTO messageIds = messageService.getById(messageId);
         return new ResponseEntity<>(messageIds, HttpStatus.OK);

@@ -35,7 +35,7 @@ public class SettingsController {
         return new ResponseEntity<>(settingIds, HttpStatus.OK);
     }
 
-    @PutMapping({"updateSettings/{settingsId}"})
+    @PutMapping({"/updateSettings/{settingsId}"})
     ResponseEntity<SettingsDTO> updateSettings(@PathVariable Long settingsId, @RequestBody SettingsDTO settingsDTO){
         SettingsDTO settingsAndId = settingsService.updateSettings(settingsId, settingsDTO);
         return new ResponseEntity<>(settingsAndId, HttpStatus.OK);
