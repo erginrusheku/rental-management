@@ -1,8 +1,12 @@
 package com.rental_management.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.List;
-
+@Getter
+@Setter
 public class User {
     private Long id;
     private Date startDate;
