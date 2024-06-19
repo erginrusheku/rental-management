@@ -1,12 +1,29 @@
 package com.rental_management.service;
 
+import com.rental_management.dto.ErrorDTO;
+import com.rental_management.dto.ResponseBody;
+import com.rental_management.dto.SuccessDTO;
 import com.rental_management.dto.UserDTO;
+import com.rental_management.entities.User;
+import com.rental_management.repo.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
+
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+    }
+
     @Override
     public UserDTO getUserById(Long id) {
         return null;
@@ -18,8 +35,29 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        return null;
+    public ResponseBody createUser(UserDTO userDTO) {
+
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        User user = modelMapper.map(userDTO, User.class);
+        User savedUser = userRepository.save(user);
+        if(savedUser == null){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(false);
+            errorDTO.setMessage("User not found with id: " + user.getId());
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+        }else{
+            SuccessDTO successDTO = new SuccessDTO();
+            successDTO.setSuccess(true);
+            successDTO.setMessage("User with id: " + user.getId() + "found successfully");
+            successes.add(successDTO);
+            responseBody.setSuccess(successes);
+        }
+        modelMapper.map(savedUser, UserDTO.class);
+        return responseBody;
     }
 
     @Override
