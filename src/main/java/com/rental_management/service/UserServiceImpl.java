@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -31,7 +32,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserDTO> getAllUsers() {
-        return null;
+        List<User> userList = userRepository.findAll();
+        return userList.stream().map(users -> modelMapper.map(userList, UserDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -46,13 +49,13 @@ public class UserServiceImpl implements UserService{
         if(savedUser == null){
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(false);
-            errorDTO.setMessage("User not found with id: " + user.getId());
+            errorDTO.setMessage("User not created with id: " + user.getId());
             errors.add(errorDTO);
             responseBody.setError(errors);
         }else{
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
-            successDTO.setMessage("User with id: " + user.getId() + "found successfully");
+            successDTO.setMessage("User with id: " + user.getId() + " created successfully");
             successes.add(successDTO);
             responseBody.setSuccess(successes);
         }
