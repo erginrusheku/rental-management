@@ -1,5 +1,6 @@
 package com.rental_management.controller;
 
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.UserDTO;
 import com.rental_management.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -31,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
-        UserDTO createdUser = userService.createUser(userDTO);
+    ResponseEntity<ResponseBody> createUser(@RequestBody UserDTO userDTO){
+        ResponseBody createdUser = userService.createUser(userDTO);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
