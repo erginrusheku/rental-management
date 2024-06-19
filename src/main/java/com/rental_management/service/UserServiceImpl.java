@@ -44,24 +44,31 @@ public class UserServiceImpl implements UserService{
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
-        User user = modelMapper.map(userDTO, User.class);
-        User savedUser = userRepository.save(user);
-        if(savedUser == null){
+        if (userDTO.getUserName() == null || userDTO.getUserLastName() == null || userDTO.getEmail() == null) {
             ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrors(false);
-            errorDTO.setMessage("User not created with id: " + user.getId());
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User not created because username, lastname, or email is missing");
             errors.add(errorDTO);
             responseBody.setError(errors);
-        }else{
-            SuccessDTO successDTO = new SuccessDTO();
-            successDTO.setSuccess(true);
-            successDTO.setMessage("User with id: " + user.getId() + " created successfully");
-            successes.add(successDTO);
-            responseBody.setSuccess(successes);
+            return responseBody;
         }
+
+        User user = modelMapper.map(userDTO, User.class);
+        User savedUser = userRepository.save(user);
+
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("User with id: " + savedUser.getId() + " created successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+
         modelMapper.map(savedUser, UserDTO.class);
+
         return responseBody;
     }
+
 
     @Override
     public UserDTO updateUser(Long userId, UserDTO userDTO) {
