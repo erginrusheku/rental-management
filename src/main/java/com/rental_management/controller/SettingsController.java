@@ -1,6 +1,6 @@
 package com.rental_management.controller;
 
-import com.rental_management.dto.SettingsDTO;
+
 import com.rental_management.service.SettingsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
