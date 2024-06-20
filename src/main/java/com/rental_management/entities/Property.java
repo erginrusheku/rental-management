@@ -21,7 +21,6 @@ public class Property {
     private int numberOfBedrooms;
     private int numberOfBathrooms;
     private int maximumOccupancy;
-    private String amenities;
 
     @ManyToOne
     private Promotion promotion;
