@@ -34,7 +34,8 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public List<PropertyDTO> getAllProperties() {
-        return null;
+        List<Property> propertyList = propertyRepository.findAll();
+        return propertyList.stream().map(property -> modelMapper.map(property, PropertyDTO.class)).toList();
     }
 
     @Override

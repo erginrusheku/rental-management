@@ -15,7 +15,6 @@ public class Property {
     private Long propertyId;
     private String title;
     private String description;
-    private String type;
     private String location;
     private double pricePerNight;
     private int numberOfBedrooms;
