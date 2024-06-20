@@ -19,6 +19,7 @@ public class PropertyServiceImpl implements PropertyService{
 
     @Override
     public PropertyDTO createProperty(PropertyDTO propertyDTO) {
+
         return null;
     }
 

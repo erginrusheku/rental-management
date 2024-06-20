@@ -10,4 +10,5 @@ public interface PropertyService {
     PropertyDTO createProperty(PropertyDTO propertyDTO);
     PropertyDTO updateProperty(Long propertyId, PropertyDTO propertyDTO);
     void deletePropertyById(Long id);
+
 }
