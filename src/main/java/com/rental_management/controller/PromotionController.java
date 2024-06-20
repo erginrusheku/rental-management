@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.PromotionDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.PromotionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +47,11 @@ public class PromotionController {
     ResponseEntity<Void> deletePromotion(@PathVariable Long promotionId){
         promotionService.deletePromotionById(promotionId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/createPromotion/{ownerId}/{propertyId}")
+    ResponseEntity<ResponseBody> createPromotionByOwnerForProperties(@PathVariable Long ownerId, @PathVariable Long propertyId, @RequestBody PromotionDTO promotionDTO){
+        ResponseBody createPromotion = promotionService.createPromotionByOwnerForProperties(ownerId,propertyId,promotionDTO);
+        return new ResponseEntity<>(createPromotion,HttpStatus.CREATED);
     }
 }

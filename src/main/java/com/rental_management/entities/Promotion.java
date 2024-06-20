@@ -21,4 +21,7 @@ public class Promotion {
 
     @OneToMany(mappedBy = "promotion", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Property> properties;
+
+    @ManyToOne
+    private Owner owner;
 }

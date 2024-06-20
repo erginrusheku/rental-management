@@ -1,6 +1,7 @@
 package com.rental_management.service;
 
 import com.rental_management.dto.OwnerProperty;
+import com.rental_management.dto.PromotionDTO;
 import com.rental_management.dto.PropertyDTO;
 import com.rental_management.dto.ResponseBody;
 

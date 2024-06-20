@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
+
 @Getter
 @Setter
 public class PromotionDTO {
@@ -12,5 +14,4 @@ public class PromotionDTO {
     private Date endDate;
     private double discountAmount;
     private String offerDetails;
-    private Property property;
 }

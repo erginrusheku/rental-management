@@ -22,4 +22,6 @@ public class Owner {
     private List<Message> sentMessages;
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Message> receivedMessages;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Promotion> promotions;
 }
