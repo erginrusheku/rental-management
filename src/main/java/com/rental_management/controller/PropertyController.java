@@ -1,6 +1,8 @@
 package com.rental_management.controller;
 
+import com.rental_management.dto.OwnerProperty;
 import com.rental_management.dto.PropertyDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.PropertyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +48,11 @@ public class PropertyController {
     ResponseEntity<Void> deletePropertyById(@PathVariable Long propertyId){
         propertyService.deletePropertyById(propertyId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/createProperty/{ownerId}")
+    ResponseEntity<ResponseBody> createPropertiesByOwner(@PathVariable Long ownerId, @RequestBody List<PropertyDTO> propertyList){
+        ResponseBody createPropertyByOwner = propertyService.createPropertiesByOwner(ownerId, propertyList);
+        return new ResponseEntity<>(createPropertyByOwner, HttpStatus.CREATED);
     }
 }

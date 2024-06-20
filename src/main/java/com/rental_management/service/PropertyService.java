@@ -12,6 +12,6 @@ public interface PropertyService {
     PropertyDTO createProperty(PropertyDTO propertyDTO);
     PropertyDTO updateProperty(Long propertyId, PropertyDTO propertyDTO);
     void deletePropertyById(Long id);
-    ResponseBody getPropertiesByOwner(Long ownerId, OwnerProperty ownerProperty);
+    ResponseBody createPropertiesByOwner(Long ownerId, List<PropertyDTO> propertyList);
 
 }

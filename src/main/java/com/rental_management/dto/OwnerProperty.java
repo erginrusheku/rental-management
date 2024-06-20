@@ -8,6 +8,4 @@ import lombok.Setter;
 public class OwnerProperty {
 
     private Long propertyId;
-    private int maximumOccupancy;
-
 }
