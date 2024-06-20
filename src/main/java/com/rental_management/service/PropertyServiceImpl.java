@@ -73,16 +73,15 @@ public class PropertyServiceImpl implements PropertyService {
 
         List<Property> propertiesList = propertyList.stream()
                 .map(propertyDto -> {
-                    Property property = modelMapper.map(propertyDto, Property.class);
-                    Property createdProperty = propertyRepository.save(property);
-
-                    if (createdProperty.getTitle() == null) {
+                    if (propertyDto.getTitle() == null) {
                         ErrorDTO errorDTO = new ErrorDTO();
                         errorDTO.setErrors(true);
                         errorDTO.setMessage("Property not created without title");
                         errors.add(errorDTO);
                         return null;
                     } else {
+                        Property property = modelMapper.map(propertyDto, Property.class);
+                        Property createdProperty = propertyRepository.save(property);
                         SuccessDTO success = new SuccessDTO();
                         success.setSuccess(true);
                         success.setMessage("Property with Id: " + createdProperty.getPropertyId() + " successfully created!");
