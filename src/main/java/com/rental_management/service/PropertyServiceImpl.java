@@ -76,10 +76,10 @@ public class PropertyServiceImpl implements PropertyService {
                     Property property = modelMapper.map(propertyDto, Property.class);
                     Property createdProperty = propertyRepository.save(property);
 
-                    if (createdProperty.getPropertyId() == null) {
+                    if (createdProperty.getTitle() == null) {
                         ErrorDTO errorDTO = new ErrorDTO();
                         errorDTO.setErrors(true);
-                        errorDTO.setMessage("Property not created without id");
+                        errorDTO.setMessage("Property not created without title");
                         errors.add(errorDTO);
                         return null;
                     } else {
