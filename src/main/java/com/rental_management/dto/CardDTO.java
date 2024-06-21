@@ -8,6 +8,10 @@ import java.util.Date;
 @Getter
 @Setter
 public class CardDTO {
-    private Long userId;
     private String cardholderName;
+    private Long cardNumber;
+    private String cvv;
+    private String cardType;
+    private Date creationDate;
+    private Date expirationDate;
 }
