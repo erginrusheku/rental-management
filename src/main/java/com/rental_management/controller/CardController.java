@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.CardDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.CardService;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,11 @@ public class CardController {
     ResponseEntity<Void> deleteCard(@PathVariable Long cardId){
         cardService.deleteCardById(cardId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/createCard/{userId}")
+    public ResponseEntity<ResponseBody> createCardByUser(@PathVariable Long userId, @RequestBody List<CardDTO> cardDTOList) {
+        ResponseBody createCard = cardService.createCardByUser(userId, cardDTOList);
+        return new ResponseEntity<>(createCard, HttpStatus.CREATED);
     }
 }
