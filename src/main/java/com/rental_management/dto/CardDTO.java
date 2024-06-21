@@ -9,5 +9,5 @@ import java.util.Date;
 @Setter
 public class CardDTO {
     private Long userId;
-    private UserDTO userDetails;
+    private String cardholderName;
 }

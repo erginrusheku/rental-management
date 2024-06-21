@@ -15,15 +15,13 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cardId;
     private String cardholderName;
-    private String cardNumber; // Encrypted for security
-    private Date expirationDate;
-    private String cvv; // Encrypted for security
-    private String billingAddress;
-    private String cardType; // Visa, MasterCard, American Express, etc.
-    private boolean isDefaultCard;
+    private Long cardNumber;
+    private String cvv;
+    private String cardType;
     private Date creationDate;
-    private Date lastUpdatedDate;
+    private Date expirationDate;
+
     @ManyToOne
     private User user;
-    // Role to be added
+
 }
