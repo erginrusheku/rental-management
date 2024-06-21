@@ -69,7 +69,7 @@ public class PromotionServiceImpl implements PromotionService{
         if(existingOwner.isEmpty()){
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
-            error.setMessage("Owner not found with id: " + existingOwner);
+            error.setMessage("Owner not found with id: " + ownerId);
             errors.add(error);
             responseBody.setError(errors);
             return responseBody;
@@ -83,7 +83,7 @@ public class PromotionServiceImpl implements PromotionService{
             if(existingProperty.isEmpty()){
                 ErrorDTO error = new ErrorDTO();
                 error.setErrors(true);
-                error.setMessage("Property not found with id: " + existingProperty);
+                error.setMessage("Property not found with id: " + propertyId);
                 errors.add(error);
                 responseBody.setError(errors);
                 return responseBody;
@@ -91,21 +91,20 @@ public class PromotionServiceImpl implements PromotionService{
 
             Property optionalProperty = existingProperty.get();
 
-            Promotion promotion = new Promotion();
-            promotion.setOwner(optionalOwner);
-
-            List<Property> propertyList = new ArrayList<>();
-            propertyList.add(optionalProperty);
-            promotion.setProperties(propertyList);
+        Promotion promotion = modelMapper.map(promotionDTO, Promotion.class);
+        promotion.setOwner(optionalOwner);
+        promotion.setProperty(optionalProperty);
 
         Promotion savedPromotion = promotionRepository.save(promotion);
 
+        modelMapper.map(savedPromotion, PromotionDTO.class);
+
         SuccessDTO success = new SuccessDTO();
+        success.setSuccess(true);
         success.setMessage("Promotion created successfully");
         successes.add(success);
         responseBody.setSuccess(successes);
 
-        modelMapper.map(savedPromotion, PromotionDTO.class);
         return responseBody;
     }
 }

@@ -19,8 +19,8 @@ public class Promotion {
     private double discountAmount;
     private String offerDetails;
 
-    @OneToMany(mappedBy = "promotion", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Property> properties;
+    @OneToOne
+    private Property property;
 
     @ManyToOne
     private Owner owner;

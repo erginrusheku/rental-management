@@ -21,7 +21,7 @@ public class Property {
     private int numberOfBathrooms;
     private int maximumOccupancy;
 
-    @ManyToOne
+    @OneToOne(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Promotion promotion;
     @ManyToOne
     private Owner owner;
