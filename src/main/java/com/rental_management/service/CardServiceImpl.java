@@ -82,7 +82,6 @@ public class CardServiceImpl implements CardService{
                         return null; // Return null for invalid card DTOs
                     } else {
                         Card card = modelMapper.map(cardDTO, Card.class);
-                        card.setUser(user); // Associate the card with the user
                         Card createdCard = cardRepository.save(card);
                         SuccessDTO success = new SuccessDTO();
                         success.setSuccess(true);
@@ -92,7 +91,7 @@ public class CardServiceImpl implements CardService{
                     }
                 })
                 .filter(Objects::nonNull) // Filter out nulls (invalid card DTOs)
-                .toList();
+                .collect(Collectors.toList());
 
         user.setCards(createdCards);
         User savedUser = userRepository.save(user);
