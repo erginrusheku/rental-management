@@ -11,4 +11,5 @@ public class BookingDTO {
     private Date checkInDate;
     private Date checkOutDate;
     private Status status;
+    private int day;
 }
