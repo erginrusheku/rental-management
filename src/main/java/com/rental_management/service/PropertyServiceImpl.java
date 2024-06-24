@@ -96,6 +96,8 @@ public class PropertyServiceImpl implements PropertyService {
         existingOwner.setProperties(propertiesList);
         Owner savedOwner = ownerRepository.save(existingOwner);
 
+
+
         propertiesList.forEach(property -> property.setOwner(savedOwner));
         propertyRepository.saveAll(propertiesList);
 

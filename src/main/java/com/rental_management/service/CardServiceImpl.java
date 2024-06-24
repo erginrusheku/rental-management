@@ -74,15 +74,17 @@ public class CardServiceImpl implements CardService{
 
         List<Card> createdCards = cardDTOList.stream()
                 .map(cardDTO -> {
-                    if (cardDTO.getCardholderName() == null || cardDTO.getCardNumber() == null || cardDTO.getCardType() == null) {
+                    if (cardDTO.getCardNumber() == null || cardDTO.getCardType() == null) {
                         ErrorDTO error = new ErrorDTO();
                         error.setErrors(true);
-                        error.setMessage("Card without Holder Name, Number, or Type wasn't created!");
+                        error.setMessage("Card without Number, or Type wasn't created!");
                         errors.add(error);
                         return null;
                     } else {
                         Card card = modelMapper.map(cardDTO, Card.class);
                         Card createdCard = cardRepository.save(card);
+                        String userName = user.getUserName();
+                        card.setCardholderName(userName);
                         SuccessDTO success = new SuccessDTO();
                         success.setSuccess(true);
                         success.setMessage("Card created successfully!");

@@ -95,8 +95,22 @@ public class PromotionServiceImpl implements PromotionService{
         promotion.setOwner(optionalOwner);
         promotion.setProperty(optionalProperty);
 
-        Promotion savedPromotion = promotionRepository.save(promotion);
 
+
+        double promotionAmount = promotion.getDiscountAmount();
+        double propertyPricePerNight = optionalProperty.getPricePerNight();
+        optionalProperty.setPricePerNight(promotionAmount);
+
+        if(promotionAmount > propertyPricePerNight){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Promotion discount amount is greater than the property amount");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Promotion savedPromotion = promotionRepository.save(promotion);
         modelMapper.map(savedPromotion, PromotionDTO.class);
 
         SuccessDTO success = new SuccessDTO();

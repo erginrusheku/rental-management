@@ -16,6 +16,7 @@ public class Booking {
     private Date checkInDate;
     private Date checkOutDate;
     private double totalPrice;
+    private int day;
     @Enumerated(EnumType.STRING)
     private Status status;
     @ManyToOne

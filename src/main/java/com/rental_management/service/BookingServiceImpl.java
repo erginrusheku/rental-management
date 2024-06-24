@@ -96,8 +96,13 @@ public class BookingServiceImpl implements BookingService{
 
             Booking createdBooking = bookingRepository.save(booking);
 
+            double totalAmountByDay = createdBooking.getDay();
             double propertyPrice = optionalProperty.getPricePerNight();
-            booking.setTotalPrice(propertyPrice);
+            double totalPrice = totalAmountByDay * propertyPrice;
+
+            booking.setTotalPrice(totalPrice);
+
+
 
             if (createdBooking.getBookingId() == null) {
                 ErrorDTO errorDTO = new ErrorDTO();
