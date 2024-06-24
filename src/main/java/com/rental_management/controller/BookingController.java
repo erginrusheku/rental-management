@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.BookingDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +44,11 @@ public class BookingController {
    ResponseEntity<Void> deleteById(@PathVariable Long bookingId){
         bookingService.deleteById(bookingId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+   }
+
+   @PostMapping("/createBooking/{userId}/{propertyId}")
+    public ResponseEntity<ResponseBody> createBookingByUserForProperty(@PathVariable Long userId,@PathVariable Long propertyId,@RequestBody List<BookingDTO> bookingList){
+        ResponseBody createBooking = bookingService.createBookingByUserForProperty(userId, propertyId, bookingList);
+        return new ResponseEntity<>(createBooking, HttpStatus.CREATED);
    }
 }

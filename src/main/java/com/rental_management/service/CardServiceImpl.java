@@ -79,7 +79,7 @@ public class CardServiceImpl implements CardService{
                         error.setErrors(true);
                         error.setMessage("Card without Holder Name, Number, or Type wasn't created!");
                         errors.add(error);
-                        return null; // Return null for invalid card DTOs
+                        return null;
                     } else {
                         Card card = modelMapper.map(cardDTO, Card.class);
                         Card createdCard = cardRepository.save(card);
@@ -87,10 +87,10 @@ public class CardServiceImpl implements CardService{
                         success.setSuccess(true);
                         success.setMessage("Card created successfully!");
                         successes.add(success);
-                        return createdCard; // Return the created card
+                        return createdCard;
                     }
                 })
-                .filter(Objects::nonNull) // Filter out nulls (invalid card DTOs)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         user.setCards(createdCards);

@@ -10,6 +10,5 @@ import java.util.Date;
 public class BookingDTO {
     private Date checkInDate;
     private Date checkOutDate;
-    private double totalPrice;
     private Status status;
 }
