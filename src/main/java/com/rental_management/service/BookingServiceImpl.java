@@ -116,6 +116,9 @@ public class BookingServiceImpl implements BookingService{
 
         optinalUser.setBookings(bookings);
         User savedUser = userRepository.save(optinalUser);
+
+
+
         optionalProperty.setBookings(bookings);
         Property savedProperty = propertyRepository.save(optionalProperty);
 
