@@ -16,6 +16,7 @@ public class User {
     private String userName;
     private String userLastname;
     private String email;
+    private int peopleNumber;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Card> cards;
@@ -25,6 +26,4 @@ public class User {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Review> reviews;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<People> people;
 }
