@@ -90,6 +90,15 @@ public class BookingServiceImpl implements BookingService{
 
         Property optionalProperty = existingProperty.get();
 
+        if(optionalProperty.getMaxOccupancy() < optinalUser.getPeopleNumber()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("The number of people: "+optinalUser.getPeopleNumber() +" is higher than maximum occupancy capacity: "+ optionalProperty.getMaxOccupancy());
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
 
         List<Booking> bookings = bookingList.stream().map(bookingDTO -> {
             Booking booking = modelMapper.map(bookingDTO, Booking.class);
