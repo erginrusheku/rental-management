@@ -9,14 +9,13 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Entity
-public class Message {
+public class OwnerMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long messageId;
     private String content;
     private Timestamp timestamp;
-    @ManyToOne
-    private User user;
+
     @ManyToOne
     private Owner owner;
 }

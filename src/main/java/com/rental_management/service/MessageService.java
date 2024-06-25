@@ -1,7 +1,6 @@
 package com.rental_management.service;
 
 import com.rental_management.dto.MessageDTO;
-import com.rental_management.dto.ResponseBody;
 
 import java.util.List;
 
@@ -11,5 +10,4 @@ public interface MessageService {
     MessageDTO getById(Long messageId);
     MessageDTO updateMessage(Long messageId,MessageDTO messageDTO);
     void deleteMessage(Long messageId);
-    ResponseBody createMessageByUser(Long userId, List<MessageDTO> messages);
 }
