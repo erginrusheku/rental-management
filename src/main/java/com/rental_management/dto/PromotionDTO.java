@@ -12,6 +12,6 @@ import java.util.List;
 public class PromotionDTO {
     private Date startDate;
     private Date endDate;
-    private double discountAmount;
+    private double discountOffer;
     private String offerDetails;
 }

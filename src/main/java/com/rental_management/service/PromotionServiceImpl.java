@@ -97,11 +97,12 @@ public class PromotionServiceImpl implements PromotionService{
 
 
 
-        double promotionAmount = promotion.getDiscountAmount();
+        double discountOffer = (promotionDTO.getDiscountOffer() / 100) * optionalProperty.getPricePerNight();
         double propertyPricePerNight = optionalProperty.getPricePerNight();
-        optionalProperty.setPricePerNight(promotionAmount);
+        double totalAmountByPercentage = propertyPricePerNight - discountOffer;
+        optionalProperty.setPricePerNight(totalAmountByPercentage);
 
-        if(promotionAmount > propertyPricePerNight){
+        if(discountOffer < 0 || discountOffer >= 100){
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Promotion discount amount is greater than the property amount");
