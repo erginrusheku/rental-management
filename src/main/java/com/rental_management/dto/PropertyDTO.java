@@ -13,5 +13,5 @@ public class PropertyDTO {
     private double pricePerNight;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
-    private int maximumOccupancy;
+    private int maxOccupancy;
 }

@@ -19,7 +19,7 @@ public class Property {
     private double pricePerNight;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
-    private int maximumOccupancy;
+    private int maxOccupancy;
 
     @OneToOne(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Promotion promotion;
@@ -29,6 +29,4 @@ public class Property {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Review> reviews;
-    @OneToOne(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Settings settings;
 }

@@ -25,4 +25,6 @@ public class User {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Review> reviews;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<People> people;
 }
