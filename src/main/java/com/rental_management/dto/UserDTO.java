@@ -10,4 +10,5 @@ public class UserDTO {
     private String userName;
     private String userLastName;
     private String email;
+    private int peopleNumber;
 }
