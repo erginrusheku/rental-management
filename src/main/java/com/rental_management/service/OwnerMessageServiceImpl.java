@@ -1,9 +1,10 @@
 package com.rental_management.service;
 
 import com.rental_management.dto.*;
-import com.rental_management.entities.Message;
+
 import com.rental_management.entities.Owner;
-import com.rental_management.repo.MessageRepository;
+import com.rental_management.entities.OwnerMessage;
+import com.rental_management.repo.OwnerMessageRepository;
 import com.rental_management.repo.OwnerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -15,35 +16,35 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class MessageServiceImpl implements MessageService {
+public class OwnerMessageServiceImpl implements OwnerMessageService {
 
    private final OwnerRepository ownerRepository;
-   private final MessageRepository messageRepository;
+   private final OwnerMessageRepository messageRepository;
     private final ModelMapper modelMapper;
 
-    public MessageServiceImpl(OwnerRepository ownerRepository, MessageRepository messageRepository, ModelMapper modelMapper) {
+    public OwnerMessageServiceImpl(OwnerRepository ownerRepository, OwnerMessageRepository messageRepository, ModelMapper modelMapper) {
         this.ownerRepository = ownerRepository;
         this.messageRepository = messageRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
-    public List<MessageDTO> getAllMessages() {
+    public List<OwnerMessageDTO> getAllMessages() {
         return List.of();
     }
 
     @Override
-    public MessageDTO createMessage(MessageDTO messageDTO) {
+    public OwnerMessageDTO createMessage(OwnerMessageDTO messageDTO) {
         return null;
     }
 
     @Override
-    public MessageDTO getById(Long messageId) {
+    public OwnerMessageDTO getById(Long messageId) {
         return null;
     }
 
     @Override
-    public MessageDTO updateMessage(Long messageId, MessageDTO messageDTO) {
+    public OwnerMessageDTO updateMessage(Long messageId, OwnerMessageDTO messageDTO) {
         return null;
     }
 
@@ -52,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
 
     }
     @Override
-    public ResponseBody createMessageByOwner(Long ownerId, List<MessageDTO> messageList){
+    public ResponseBody createMessageByOwner(Long ownerId, List<OwnerMessageDTO> messageList){
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errorList = new ArrayList<>();
         List<SuccessDTO> successList = new ArrayList<>();
@@ -69,7 +70,7 @@ public class MessageServiceImpl implements MessageService {
 
         Owner optionalOwner = existingOwner.get();
 
-        List<Message> messages = messageList.stream().map(messageDTO -> {
+        List<OwnerMessage> messages = messageList.stream().map(messageDTO -> {
 
             if(messageDTO.getContent() == null){
                 ErrorDTO errorDTO = new ErrorDTO();
@@ -80,8 +81,8 @@ public class MessageServiceImpl implements MessageService {
                 return null;
             }
 
-            Message message = modelMapper.map(messageDTO, Message.class);
-            Message createMessage = messageRepository.save(message);
+            OwnerMessage message = modelMapper.map(messageDTO, OwnerMessage.class);
+            OwnerMessage createMessage = messageRepository.save(message);
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
             successDTO.setMessage("The message was created successfully");
