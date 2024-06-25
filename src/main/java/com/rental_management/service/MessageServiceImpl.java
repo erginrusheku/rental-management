@@ -1,6 +1,7 @@
 package com.rental_management.service;
 
 import com.rental_management.dto.MessageDTO;
+import com.rental_management.dto.UserMessageDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +14,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageDTO createMessage(MessageDTO messageDTO) {
+    public UserMessageDTO createMessage(UserMessageDTO messageDTO) {
         return null;
     }
 
     @Override
-    public MessageDTO getById(Long messageId) {
+    public UserMessageDTO getById(Long messageId) {
         return null;
     }
 
