@@ -1,5 +1,6 @@
 package com.rental_management.controller;
 
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.ReviewDTO;
 import com.rental_management.service.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -46,5 +47,11 @@ public class ReviewController {
     ResponseEntity<Void> deleteById(@PathVariable Long reviewId){
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/createReview/{userId}/{propertyId}")
+    ResponseEntity<ResponseBody> createReviewByUserForProperty(@PathVariable Long userId, @PathVariable Long propertyId, @RequestBody List<ReviewDTO> reviewList){
+        ResponseBody createReview = reviewService.createReviewByUserForProperty(userId,propertyId,reviewList);
+        return new ResponseEntity<>(createReview, HttpStatus.CREATED);
     }
 }

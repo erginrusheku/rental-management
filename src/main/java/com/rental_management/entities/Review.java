@@ -13,6 +13,7 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long reviewId;
+    @Enumerated(EnumType.STRING)
     private Rating rating;
     private String comment;
     private Date date;
