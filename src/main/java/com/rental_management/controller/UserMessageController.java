@@ -1,9 +1,8 @@
 package com.rental_management.controller;
 
-import com.rental_management.dto.MessageDTO;
+
 import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.UserMessageDTO;
-import com.rental_management.service.MessageService;
 import com.rental_management.service.UserMessageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
