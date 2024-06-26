@@ -109,7 +109,10 @@ public class PropertyServiceImpl implements PropertyService {
         return responseBody;
     }
 
-
+    @Override
+    public Property findPropertyByOwnerId(Long ownerId, Long propertyId) {
+        return propertyRepository.findPropertyByOwnerId(ownerId, propertyId);
+    }
 
 
 }

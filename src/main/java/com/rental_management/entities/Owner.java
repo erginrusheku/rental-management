@@ -1,5 +1,6 @@
 package com.rental_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +17,13 @@ public class Owner {
     private String name;
     private int phoneNumber;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Property> properties;
+    @JsonIgnore
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OwnerMessage> messageList;
+    @JsonIgnore
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Promotion> promotions;
 }

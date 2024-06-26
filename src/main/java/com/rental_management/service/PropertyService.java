@@ -4,6 +4,7 @@ import com.rental_management.dto.OwnerProperty;
 import com.rental_management.dto.PromotionDTO;
 import com.rental_management.dto.PropertyDTO;
 import com.rental_management.dto.ResponseBody;
+import com.rental_management.entities.Property;
 
 import java.util.List;
 
@@ -14,5 +15,6 @@ public interface PropertyService {
     PropertyDTO updateProperty(Long propertyId, PropertyDTO propertyDTO);
     void deletePropertyById(Long id);
     ResponseBody createPropertiesByOwner(Long ownerId, List<PropertyDTO> propertyList);
+    Property findPropertyByOwnerId(Long ownerId, Long propertyId);
 
 }
