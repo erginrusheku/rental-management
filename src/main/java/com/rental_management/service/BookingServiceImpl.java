@@ -72,7 +72,6 @@ public class BookingServiceImpl implements BookingService{
             error.setErrors(true);
             error.setMessage("User not found: "+ userId);
             errors.add(error);
-            //responseBody.setError(errors);
             return responseBody;
         }
 
@@ -84,7 +83,6 @@ public class BookingServiceImpl implements BookingService{
             error.setErrors(true);
             error.setMessage("Property not found: "+ propertyId);
             errors.add(error);
-            //responseBody.setError(errors);
             return responseBody;
         }
 
@@ -103,24 +101,21 @@ public class BookingServiceImpl implements BookingService{
         List<Booking> bookings = bookingList.stream().map(bookingDTO -> {
             Booking booking = modelMapper.map(bookingDTO, Booking.class);
 
-            Booking createdBooking = bookingRepository.save(booking);
-
-
-            double totalAmountByDay = createdBooking.getDay();
+            double totalAmountByDay = booking.getDay();
             double propertyPrice = optionalProperty.getPricePerNight();
             double totalPrice = totalAmountByDay * propertyPrice;
 
             booking.setTotalPrice(totalPrice);
 
-
-
-            if (createdBooking.getBookingId() == null) {
+            if(bookingRepository.existsByProperty(optionalProperty)){
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
-                errorDTO.setMessage("Booking could not be finalized without a booking ID");
+                errorDTO.setMessage("Booking could not be made because property with id: " +optionalProperty.getPropertyId()+" is occupied");
                 errors.add(errorDTO);
                 return null;
             } else {
+                Booking createdBooking = bookingRepository.save(booking);
+
                 SuccessDTO successDTO = new SuccessDTO();
                 successDTO.setSuccess(true);
                 successDTO.setMessage("The booking was created successfully with ID: " + createdBooking.getBookingId());
