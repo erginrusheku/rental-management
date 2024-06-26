@@ -10,10 +10,8 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,6 +84,8 @@ public class ReviewServiceImpl implements ReviewService{
 
         List<Review> reviews = reviewList.stream().map(reviewDTO -> {
             Review review = modelMapper.map(reviewDTO, Review.class);
+            review.setDate(Date.from(Instant.now()));
+
             Review createReview = reviewRepository.save(review);
 
             SuccessDTO successDTO = new SuccessDTO();
