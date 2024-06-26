@@ -24,7 +24,7 @@ public class Card {
 
     private String cardholderName;
 
-    @Column(unique = true, length = 16) // Ensure length matches the expected 16 digits
+    @Column(unique = true, length = 16)
     @Pattern(regexp = "\\d{16}", message = "Card Number must be exactly 16 digits")
     private String cardNumber;
 

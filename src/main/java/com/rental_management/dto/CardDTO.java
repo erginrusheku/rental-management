@@ -8,7 +8,7 @@ import java.util.Date;
 @Setter
 public class CardDTO {
 
-    private Long cardNumber;
+    private String cardNumber;
     private int cvv;
     private String cardType;
 }

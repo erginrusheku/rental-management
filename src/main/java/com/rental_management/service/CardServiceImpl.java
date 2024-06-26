@@ -75,14 +75,24 @@ public class CardServiceImpl implements CardService{
 
         List<Card> createdCards = cardDTOList.stream()
                 .map(cardDTO -> {
-                    if (cardDTO.getCardNumber() == null || cardDTO.getCardType() == null) {
-                        ErrorDTO error = new ErrorDTO();
-                        error.setErrors(true);
-                        error.setMessage("Card without Number, or Type wasn't created!");
-                        errors.add(error);
+                    if(cardRepository.existsByCardNumber(cardDTO.getCardNumber())){
+                        ErrorDTO errorDTO = new ErrorDTO();
+                        errorDTO.setErrors(true);
+                        errorDTO.setMessage("The same card number cannot be used twice");
+                        errors.add(errorDTO);
+                        responseBody.setError(errors);
                         return null;
-                    } else {
+                    }
+                    else {
                         Card card = modelMapper.map(cardDTO, Card.class);
+
+                        if(cardRepository.existsByCardNumber(card.getCardNumber())){
+                            ErrorDTO errorDTO = new ErrorDTO();
+                            errorDTO.setErrors(true);
+                            errorDTO.setMessage("The same card number cannot be used twice");
+                            errors.add(errorDTO);
+                            responseBody.setError(errors);
+                        }
 
                         card.setCreationDate(Date.from(Instant.now()));
 
@@ -93,6 +103,7 @@ public class CardServiceImpl implements CardService{
                         card.setExpirationDate(Date.from(instant));
 
                         Card createdCard = cardRepository.save(card);
+
                         String userName = user.getUserName();
                         card.setCardholderName(userName);
                         SuccessDTO success = new SuccessDTO();
