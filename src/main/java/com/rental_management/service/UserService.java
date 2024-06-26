@@ -13,4 +13,5 @@ public interface UserService {
     UserDTO updateUser(Long userId, UserDTO userDTO);
     void deleteUser(Long id);
     User getCardsByUserId(Long userId, Long cardId);
+    User getReviewByUserId(Long userId, Long reviewId);
 }

@@ -55,4 +55,10 @@ public class UserController {
         User findCards = userService.getCardsByUserId(userId, cardId);
         return new ResponseEntity<>(findCards, HttpStatus.OK);
     }
+
+    @GetMapping("/getReview/{userId}/{reviewId}")
+    ResponseEntity<User> getReviewByUserId(@PathVariable Long userId, @PathVariable Long reviewId){
+        User findCards = userService.getReviewByUserId(userId, reviewId);
+        return new ResponseEntity<>(findCards, HttpStatus.OK);
+    }
 }

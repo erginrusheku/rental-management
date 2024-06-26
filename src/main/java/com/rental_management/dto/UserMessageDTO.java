@@ -10,5 +10,5 @@ import java.sql.Timestamp;
 public class UserMessageDTO {
 
     private String content;
-    private Timestamp timestamp;
+
 }

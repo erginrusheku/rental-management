@@ -17,14 +17,13 @@ import java.util.stream.Collectors;
 @Service
 public class OwnerServiceImpl implements OwnerService{
 
-    private final UserRepository userRepository;
+
     private final OwnerRepository ownerRepository;
 
     private final ModelMapper modelMapper;
 
-    public OwnerServiceImpl(UserRepository userRepository,
-                            OwnerRepository ownerRepository, ModelMapper modelMapper) {
-        this.userRepository = userRepository;
+    public OwnerServiceImpl(OwnerRepository ownerRepository, ModelMapper modelMapper) {
+
         this.ownerRepository = ownerRepository;
         this.modelMapper = modelMapper;
     }
@@ -55,6 +54,16 @@ public class OwnerServiceImpl implements OwnerService{
             responseBody.setError(errors);
             return responseBody;
         }
+
+        if (ownerRepository.existsByPhoneNumber(ownerDTO.getPhoneNumber())) {
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Owner not created because the phone number is already in use");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
         Owner owner = modelMapper.map(ownerDTO, Owner.class);
         Owner savedOwner = ownerRepository.save(owner);
 

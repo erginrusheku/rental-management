@@ -10,6 +10,5 @@ import java.sql.Timestamp;
 public class OwnerMessageDTO {
 
     private String content;
-    private Timestamp timestamp;
 
 }

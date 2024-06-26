@@ -10,8 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PromotionDTO {
-    private Date startDate;
-    private Date endDate;
+
     private double discountOffer;
     private String offerDetails;
 }

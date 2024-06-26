@@ -9,6 +9,8 @@ import com.rental_management.repo.OwnerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -82,6 +84,8 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
             }
 
             OwnerMessage message = modelMapper.map(messageDTO, OwnerMessage.class);
+
+            message.setTimestamp(Timestamp.from(Instant.now()));
             OwnerMessage createMessage = messageRepository.save(message);
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);

@@ -8,6 +8,8 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -80,6 +82,9 @@ public class UserMessageServiceImpl implements UserMessageService{
                     }
 
                     UserMessage message = modelMapper.map(messageDTO, UserMessage.class);
+
+                    message.setTimestamp(Timestamp.from(Instant.now()));
+
                     UserMessage createMessage = userMessageRepository.save(message);
                     SuccessDTO success = new SuccessDTO();
                     success.setSuccess(true);

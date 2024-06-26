@@ -82,6 +82,14 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User getCardsByUserId(Long userId, Long cardId) {
+
         return userRepository.getCardsByUserId(userId, cardId);
+    }
+
+    @Override
+    public User getReviewByUserId(Long userId, Long reviewId) {
+
+        return userRepository.getReviewsByUserId(userId, reviewId);
+
     }
 }

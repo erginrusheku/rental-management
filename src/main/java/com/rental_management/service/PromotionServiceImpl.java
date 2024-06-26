@@ -13,10 +13,10 @@ import com.rental_management.repo.PropertyRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,6 +110,12 @@ public class PromotionServiceImpl implements PromotionService{
             responseBody.setError(errors);
             return responseBody;
         }
+
+        promotion.setStartDate(Date.from(Instant.now()));
+        LocalDate startDate = promotion.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDate = startDate.plusDays(10);
+        Instant instant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        promotion.setEndDate(Date.from(instant));
 
         Promotion savedPromotion = promotionRepository.save(promotion);
         modelMapper.map(savedPromotion, PromotionDTO.class);

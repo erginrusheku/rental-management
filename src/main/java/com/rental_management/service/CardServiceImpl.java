@@ -9,10 +9,11 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,6 +83,15 @@ public class CardServiceImpl implements CardService{
                         return null;
                     } else {
                         Card card = modelMapper.map(cardDTO, Card.class);
+
+                        card.setCreationDate(Date.from(Instant.now()));
+
+                        LocalDate cardCreationDate = card.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                        LocalDate cardExpirationDate = cardCreationDate.plusYears(3);
+
+                        Instant instant = cardExpirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                        card.setExpirationDate(Date.from(instant));
+
                         Card createdCard = cardRepository.save(card);
                         String userName = user.getUserName();
                         card.setCardholderName(userName);
