@@ -2,6 +2,7 @@ package com.rental_management.controller;
 
 import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.UserDTO;
+import com.rental_management.entities.User;
 import com.rental_management.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,11 @@ public class UserController {
     ResponseEntity<Void> deleteUser(@PathVariable Long userId){
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{userId}/{cardId}")
+    ResponseEntity<User> getCardsByUserId(@PathVariable Long userId, @PathVariable Long cardId){
+        User findCards = userService.getCardsByUserId(userId, cardId);
+        return new ResponseEntity<>(findCards, HttpStatus.OK);
     }
 }

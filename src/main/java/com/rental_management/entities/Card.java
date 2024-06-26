@@ -1,5 +1,6 @@
 package com.rental_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,7 @@ public class Card {
 
     private Date expirationDate;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 }

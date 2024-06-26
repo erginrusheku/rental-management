@@ -12,4 +12,5 @@ public interface UserService {
     ResponseBody createUser(UserDTO userDTO);
     UserDTO updateUser(Long userId, UserDTO userDTO);
     void deleteUser(Long id);
+    User getCardsByUserId(Long userId, Long cardId);
 }

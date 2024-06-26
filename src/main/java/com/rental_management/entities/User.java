@@ -19,7 +19,7 @@ public class User {
     private String email;
     private int peopleNumber;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Card> cards;
     @JsonIgnore

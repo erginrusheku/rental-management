@@ -79,4 +79,9 @@ public class UserServiceImpl implements UserService{
     public void deleteUser(Long id) {
 
     }
+
+    @Override
+    public User getCardsByUserId(Long userId, Long cardId) {
+        return userRepository.getCardsByUserId(userId, cardId);
+    }
 }
