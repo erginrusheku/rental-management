@@ -150,4 +150,11 @@ public class BookingServiceImpl implements BookingService{
 
         //The Card to be connected in the FE
     }
+
+    @Override
+    public Booking findBookingByUserId(Long userId, Long bookingId) {
+
+        return bookingRepository.findBookingByUserId(userId, bookingId);
+
+    }
 }

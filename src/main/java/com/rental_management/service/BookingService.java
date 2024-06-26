@@ -2,6 +2,7 @@ package com.rental_management.service;
 
 import com.rental_management.dto.BookingDTO;
 import com.rental_management.dto.ResponseBody;
+import com.rental_management.entities.Booking;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface BookingService {
     BookingDTO updateBooking(Long bookingId, BookingDTO bookingDTO);
     void deleteById(Long bookingId);
     ResponseBody createBookingByUserForProperty(Long userId, Long propertyId, List<BookingDTO> bookingList);
+    Booking findBookingByUserId(Long userId, Long bookingId);
 }

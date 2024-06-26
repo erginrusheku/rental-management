@@ -2,6 +2,7 @@ package com.rental_management.controller;
 
 import com.rental_management.dto.BookingDTO;
 import com.rental_management.dto.ResponseBody;
+import com.rental_management.entities.Booking;
 import com.rental_management.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,5 +51,11 @@ public class BookingController {
     public ResponseEntity<ResponseBody> createBookingByUserForProperty(@PathVariable Long userId,@PathVariable Long propertyId,@RequestBody List<BookingDTO> bookingList){
         ResponseBody createBooking = bookingService.createBookingByUserForProperty(userId, propertyId, bookingList);
         return new ResponseEntity<>(createBooking, HttpStatus.CREATED);
+   }
+
+   @GetMapping("/{userId}/{bookingId}")
+    ResponseEntity<Booking> findBookingByUserId(@PathVariable Long userId, @PathVariable Long bookingId){
+        Booking getBookingByUserId = bookingService.findBookingByUserId(userId, bookingId);
+        return new ResponseEntity<>(getBookingByUserId, HttpStatus.OK);
    }
 }
