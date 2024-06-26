@@ -16,6 +16,8 @@ public class User {
     private Long id;
     private String userName;
     private String userLastname;
+    @Column(unique = true,length = 10)
+    String personalNumber;
     private String email;
     private int peopleNumber;
 

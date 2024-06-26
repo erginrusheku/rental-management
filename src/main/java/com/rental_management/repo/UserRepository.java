@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM users u WHERE u.id = :userId AND EXISTS (SELECT * FROM review r WHERE r.user_id = u.id AND r.review_id = :reviewId)", nativeQuery = true)
     User getReviewsByUserId(Long userId,Long reviewId);
+
+    boolean existsByPersonalNumber(String personalNumber);
 }

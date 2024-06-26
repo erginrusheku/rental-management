@@ -50,10 +50,20 @@ public class UserServiceImpl implements UserService{
             errorDTO.setMessage("User not created because username, lastname, or email is missing");
             errors.add(errorDTO);
             responseBody.setError(errors);
-            return responseBody;
         }
 
         User user = modelMapper.map(userDTO, User.class);
+
+        if(userRepository.existsByPersonalNumber(user.getPersonalNumber())){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with the same personal number cannot be created");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+
         User savedUser = userRepository.save(user);
 
 
@@ -71,8 +81,43 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public UserDTO updateUser(Long userId, UserDTO userDTO) {
-        return null;
+    public ResponseBody updateUser(Long userId, UserDTO userDTO) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User not found with id: " + userId);
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        if(!userRepository.existsByPersonalNumber(userDTO.getPersonalNumber())){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("The personal number cannot be changed");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        User existingUser = optionalUser.get();
+
+        modelMapper.map(userDTO, existingUser);
+
+        User updatedUser = userRepository.save(existingUser);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("User with id: " + updatedUser.getId() + " updated successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
     }
 
     @Override

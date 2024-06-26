@@ -9,6 +9,7 @@ import java.util.Date;
 public class UserDTO {
     private String userName;
     private String userLastName;
+    private String personalNumber;
     private String email;
     private int peopleNumber;
 }

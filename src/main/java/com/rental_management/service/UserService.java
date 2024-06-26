@@ -10,7 +10,7 @@ public interface UserService {
     UserDTO getUserById(Long id);
     List<UserDTO> getAllUsers();
     ResponseBody createUser(UserDTO userDTO);
-    UserDTO updateUser(Long userId, UserDTO userDTO);
+    ResponseBody updateUser(Long userId, UserDTO userDTO);
     void deleteUser(Long id);
     User getCardsByUserId(Long userId, Long cardId);
     User getReviewByUserId(Long userId, Long reviewId);
