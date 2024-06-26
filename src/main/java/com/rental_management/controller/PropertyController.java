@@ -63,4 +63,10 @@ public class PropertyController {
         Property getPropertyFromOwnerId = propertyService.findPropertyByOwnerId(ownerId, propertyId);
         return new ResponseEntity<>(getPropertyFromOwnerId, HttpStatus.OK);
     }
+
+    @GetMapping("/propertyPromotion/{propertyId}/{promotionId}")
+    ResponseEntity<Property> findPropertyByPromotionId(@PathVariable Long propertyId,@PathVariable Long promotionId){
+        Property getPropertyFromPromotionId = propertyService.findPromotionByPropertyId(propertyId, promotionId);
+        return new ResponseEntity<>(getPropertyFromPromotionId, HttpStatus.OK);
+    }
 }

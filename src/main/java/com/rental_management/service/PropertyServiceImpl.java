@@ -114,5 +114,10 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyRepository.findPropertyByOwnerId(ownerId, propertyId);
     }
 
+    @Override
+    public Property findPromotionByPropertyId(Long propertyId, Long promotionId) {
+        return propertyRepository.findPromotionByPropertyId(propertyId, promotionId);
+    }
+
 
 }
