@@ -88,18 +88,20 @@ public class BookingServiceImpl implements BookingService{
 
         Property optionalProperty = existingProperty.get();
 
-        if(optionalProperty.getMaxOccupancy() < optinalUser.getPeopleNumber()){
-            ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrors(true);
-            errorDTO.setMessage("The number of people: "+optinalUser.getPeopleNumber() +" is higher than maximum occupancy capacity: "+ optionalProperty.getMaxOccupancy());
-            errors.add(errorDTO);
-            responseBody.setError(errors);
-            return responseBody;
-        }
+
 
 
         List<Booking> bookings = bookingList.stream().map(bookingDTO -> {
             Booking booking = modelMapper.map(bookingDTO, Booking.class);
+
+            if (optionalProperty.getMaxOccupancy() < booking.getPeopleNumber()) {
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("The number of people is higher than maximum occupancy capacity: ");
+                errors.add(errorDTO);
+                // Instead of returning responseBody directly, return null for filtering out later
+                return null;
+            }
 
             double totalAmountByDay = booking.getDay();
             double propertyPrice = optionalProperty.getPricePerNight();
@@ -107,11 +109,12 @@ public class BookingServiceImpl implements BookingService{
 
             booking.setTotalPrice(totalPrice);
 
-            if(bookingRepository.existsByProperty(optionalProperty)){
+            if (bookingRepository.existsByProperty(optionalProperty)) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
-                errorDTO.setMessage("Booking could not be made because property with id: " +optionalProperty.getPropertyId()+" is occupied");
+                errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
                 errors.add(errorDTO);
+                // Instead of returning responseBody directly, return null for filtering out later
                 return null;
             } else {
                 Booking createdBooking = bookingRepository.save(booking);
@@ -120,9 +123,11 @@ public class BookingServiceImpl implements BookingService{
                 successDTO.setSuccess(true);
                 successDTO.setMessage("The booking was created successfully with ID: " + createdBooking.getBookingId());
                 successes.add(successDTO);
+                // Return the created booking object for collecting into the list
                 return createdBooking;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
+
 
         optinalUser.setBookings(bookings);
         User savedUser = userRepository.save(optinalUser);
