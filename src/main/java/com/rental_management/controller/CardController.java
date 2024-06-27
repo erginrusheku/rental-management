@@ -55,4 +55,11 @@ public class CardController {
         ResponseBody createCard = cardService.createCardByUser(userId, cardDTOList);
         return new ResponseEntity<>(createCard, HttpStatus.CREATED);
     }
+
+    @PutMapping("/updateCard/{userId}/{cardId}")
+    public ResponseEntity<ResponseBody> updateCardByUser(@PathVariable Long userId, @PathVariable Long cardId, @RequestBody List<CardDTO> cardList){
+        ResponseBody updateCard = cardService.updateCardByUser(userId,cardId,cardList);
+        return new ResponseEntity<>(updateCard, HttpStatus.OK);
+    }
 }
+

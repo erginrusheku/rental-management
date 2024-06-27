@@ -129,4 +129,94 @@ public class CardServiceImpl implements CardService{
 
         return responseBody;
     }
+
+    @Override
+    public ResponseBody updateCardByUser(Long userId, Long cardId, List<CardDTO> cardList) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        User optionalUser = existingUser.get();
+
+
+
+        Optional<Card> existingCardOpt = cardRepository.findById(cardId);
+        if (existingCardOpt.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Card with id: " + cardId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Card existingCard = existingCardOpt.get();
+
+
+        List<Card> cards = cardList.stream().map(cardDTO1 -> {
+
+                    if(cardRepository.existsByCardNumber(cardDTO1.getCardNumber())){
+                        ErrorDTO errorDTO = new ErrorDTO();
+                        errorDTO.setErrors(true);
+                        errorDTO.setMessage("The same card number cannot be used twice");
+                        errors.add(errorDTO);
+                        responseBody.setError(errors);
+                        return null;
+                    }
+
+            Card card = modelMapper.map(cardDTO1, Card.class);
+
+            if(cardRepository.existsByCardType(cardDTO1.getCardType())){
+                        ErrorDTO errorDTO = new ErrorDTO();
+                        errorDTO.setErrors(true);
+                        errorDTO.setMessage("The card type is the same and you cant update the card");
+                        errors.add(errorDTO);
+                        responseBody.setError(errors);
+                        return null;
+                    }
+
+                    card.setCreationDate(Date.from(Instant.now()));
+
+            LocalDate cardCreationDate = card.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate cardExpirationDate = cardCreationDate.plusYears(3);
+            Instant instant = cardExpirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            card.setExpirationDate(Date.from(instant));
+
+            modelMapper.map(cardDTO1,existingCard);
+
+            Card savedCard = cardRepository.save(existingCard);
+
+            SuccessDTO successDTO = new SuccessDTO();
+            successDTO.setSuccess(true);
+            successDTO.setMessage("Card updated successfully");
+            successes.add(successDTO);
+
+            return savedCard;
+
+        }).filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        existingCard.setUser(optionalUser);
+
+        User savedUser = userRepository.save(optionalUser);
+        cards.forEach(card -> card.setUser(savedUser));
+        cardRepository.saveAll(cards);
+
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
+
+      return responseBody;
+
+    }
 }
