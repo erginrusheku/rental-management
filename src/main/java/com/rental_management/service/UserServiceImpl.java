@@ -56,15 +56,14 @@ public class UserServiceImpl implements UserService{
 
         User user = modelMapper.map(userDTO, User.class);
 
-        if(userRepository.existsByPersonalNumber(user.getPersonalNumber())){
+        if(userRepository.existsByPersonalNumber(user.getPersonalNumber()) || userRepository.existsByEmail(user.getEmail())){
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
-            errorDTO.setMessage("User with the same personal number cannot be created");
+            errorDTO.setMessage("User with the same personal number or email cannot be created");
             errors.add(errorDTO);
             responseBody.setError(errors);
             return responseBody;
         }
-
 
         User savedUser = userRepository.save(user);
 
