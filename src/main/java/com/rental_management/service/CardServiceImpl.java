@@ -86,14 +86,6 @@ public class CardServiceImpl implements CardService{
                     else {
                         Card card = modelMapper.map(cardDTO, Card.class);
 
-                        if(cardRepository.existsByCardNumber(card.getCardNumber())){
-                            ErrorDTO errorDTO = new ErrorDTO();
-                            errorDTO.setErrors(true);
-                            errorDTO.setMessage("The same card number cannot be used twice");
-                            errors.add(errorDTO);
-                            responseBody.setError(errors);
-                        }
-
                         card.setCreationDate(Date.from(Instant.now()));
 
                         LocalDate cardCreationDate = card.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -165,25 +157,16 @@ public class CardServiceImpl implements CardService{
 
         List<Card> cards = cardList.stream().map(cardDTO1 -> {
 
-                    if(cardRepository.existsByCardNumber(cardDTO1.getCardNumber())){
+                    if(cardRepository.existsByCardNumber(cardDTO1.getCardNumber()) || cardRepository.existsByCardType(cardDTO1.getCardType())){
                         ErrorDTO errorDTO = new ErrorDTO();
                         errorDTO.setErrors(true);
-                        errorDTO.setMessage("The same card number cannot be used twice");
+                        errorDTO.setMessage("The same card number and card type cannot be used twice");
                         errors.add(errorDTO);
                         responseBody.setError(errors);
                         return null;
                     }
 
             Card card = modelMapper.map(cardDTO1, Card.class);
-
-            if(cardRepository.existsByCardType(cardDTO1.getCardType())){
-                        ErrorDTO errorDTO = new ErrorDTO();
-                        errorDTO.setErrors(true);
-                        errorDTO.setMessage("The card type is the same and you cant update the card");
-                        errors.add(errorDTO);
-                        responseBody.setError(errors);
-                        return null;
-                    }
 
                     card.setCreationDate(Date.from(Instant.now()));
 

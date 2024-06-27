@@ -88,9 +88,6 @@ public class BookingServiceImpl implements BookingService{
 
         Property optionalProperty = existingProperty.get();
 
-
-
-
         List<Booking> bookings = bookingList.stream().map(bookingDTO -> {
             Booking booking = modelMapper.map(bookingDTO, Booking.class);
 
@@ -99,7 +96,6 @@ public class BookingServiceImpl implements BookingService{
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("The number of people is higher than maximum occupancy capacity: ");
                 errors.add(errorDTO);
-                // Instead of returning responseBody directly, return null for filtering out later
                 return null;
             }
 
@@ -114,16 +110,22 @@ public class BookingServiceImpl implements BookingService{
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
                 errors.add(errorDTO);
-                // Instead of returning responseBody directly, return null for filtering out later
                 return null;
             } else {
+                if (optinalUser.getCards().isEmpty()){
+                    ErrorDTO errorDTO = new ErrorDTO();
+                    errorDTO.setErrors(true);
+                    errorDTO.setMessage("Without a card you cannot create a booking");
+                    errors.add(errorDTO);
+                    responseBody.setError(errors);
+                    return null;
+                }
                 Booking createdBooking = bookingRepository.save(booking);
 
                 SuccessDTO successDTO = new SuccessDTO();
                 successDTO.setSuccess(true);
                 successDTO.setMessage("The booking was created successfully with ID: " + createdBooking.getBookingId());
                 successes.add(successDTO);
-                // Return the created booking object for collecting into the list
                 return createdBooking;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
@@ -131,8 +133,6 @@ public class BookingServiceImpl implements BookingService{
 
         optinalUser.setBookings(bookings);
         User savedUser = userRepository.save(optinalUser);
-
-
 
         optionalProperty.setBookings(bookings);
         Property savedProperty = propertyRepository.save(optionalProperty);

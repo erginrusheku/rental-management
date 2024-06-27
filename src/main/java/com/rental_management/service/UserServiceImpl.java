@@ -44,13 +44,15 @@ public class UserServiceImpl implements UserService{
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
-        if (userDTO.getUserName() == null || userDTO.getUserLastName() == null || userDTO.getEmail() == null) {
+        if (userDTO.getUserName() == null || userDTO.getUserLastName() == null || userDTO.getEmail() == null || userDTO.getPersonalNumber() == null) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User not created because username, lastname, or email is missing");
             errors.add(errorDTO);
             responseBody.setError(errors);
         }
+
+
 
         User user = modelMapper.map(userDTO, User.class);
 
