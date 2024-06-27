@@ -19,7 +19,6 @@ public class User {
     @Column(unique = true,length = 10)
     String personalNumber;
     private String email;
-    private int peopleNumber;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

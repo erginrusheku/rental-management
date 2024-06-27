@@ -20,6 +20,7 @@ public class Booking {
     private int day;
     @Enumerated(EnumType.STRING)
     private Status status;
+    private int peopleNumber;
     @ManyToOne
     private User user;
     @JsonIgnore
