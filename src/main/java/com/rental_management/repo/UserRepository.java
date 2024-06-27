@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User getReviewsByUserId(Long userId,Long reviewId);
 
     boolean existsByPersonalNumber(String personalNumber);
+
+    boolean existsByEmail(String emailAddress);
 }
