@@ -38,8 +38,8 @@ public class OwnerController {
     }
 
     @PutMapping("/updateOwnerId/{ownerId}")
-    ResponseEntity<OwnerDTO> updateOwner(@PathVariable Long ownerId,@RequestBody OwnerDTO ownerDTO){
-        OwnerDTO updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
+    ResponseEntity<ResponseBody> updateOwner(@PathVariable Long ownerId,@RequestBody OwnerDTO ownerDTO){
+        ResponseBody updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 

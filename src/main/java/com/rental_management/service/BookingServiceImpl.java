@@ -2,11 +2,9 @@ package com.rental_management.service;
 
 import com.rental_management.dto.*;
 import com.rental_management.entities.Booking;
-import com.rental_management.entities.Card;
 import com.rental_management.entities.Property;
 import com.rental_management.entities.User;
 import com.rental_management.repo.BookingRepository;
-import com.rental_management.repo.CardRepository;
 import com.rental_management.repo.PropertyRepository;
 import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -23,14 +21,12 @@ public class BookingServiceImpl implements BookingService{
 
     private final UserRepository userRepository;
     private final PropertyRepository propertyRepository;
-    private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
     private final BookingRepository bookingRepository;
 
-    public BookingServiceImpl(UserRepository userRepository, PropertyRepository propertyRepository, CardRepository cardRepository, ModelMapper modelMapper, BookingRepository bookingRepository) {
+    public BookingServiceImpl(UserRepository userRepository, PropertyRepository propertyRepository,ModelMapper modelMapper, BookingRepository bookingRepository) {
         this.userRepository = userRepository;
         this.propertyRepository = propertyRepository;
-        this.cardRepository = cardRepository;
         this.modelMapper = modelMapper;
         this.bookingRepository = bookingRepository;
     }
