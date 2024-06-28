@@ -10,6 +10,6 @@ public interface OwnerService {
     OwnerDTO getOwnerById(Long id);
     List<OwnerDTO> getAllOwners();
     ResponseBody createOwner(OwnerDTO ownerDTO);
-    OwnerDTO updateOwner(Long ownerId, OwnerDTO ownerDTO);
+    ResponseBody updateOwner(Long ownerId, OwnerDTO ownerDTO);
     void deleteOwnerById(Long id);
 }

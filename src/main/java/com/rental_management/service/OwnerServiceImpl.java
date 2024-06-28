@@ -6,12 +6,12 @@ import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.SuccessDTO;
 import com.rental_management.entities.Owner;
 import com.rental_management.repo.OwnerRepository;
-import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,8 +80,33 @@ public class OwnerServiceImpl implements OwnerService{
     }
 
     @Override
-    public OwnerDTO updateOwner(Long ownerId, OwnerDTO ownerDTO) {
-        return null;
+    public ResponseBody updateOwner(Long ownerId, OwnerDTO ownerDTO) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+        Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
+        if(existingOwner.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Owner with id: "+ ownerId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Owner optionalOwner = existingOwner.get();
+
+        modelMapper.map(ownerDTO,optionalOwner);
+
+        ownerRepository.save(optionalOwner);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Owner with id: "+ optionalOwner.getId()+" updated successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
     }
 
     @Override
@@ -89,3 +114,5 @@ public class OwnerServiceImpl implements OwnerService{
 
     }
 }
+
+

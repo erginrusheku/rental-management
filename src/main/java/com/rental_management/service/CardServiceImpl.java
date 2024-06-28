@@ -140,8 +140,6 @@ public class CardServiceImpl implements CardService{
 
         User optionalUser = existingUser.get();
 
-
-
         Optional<Card> existingCardOpt = cardRepository.findById(cardId);
         if (existingCardOpt.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
