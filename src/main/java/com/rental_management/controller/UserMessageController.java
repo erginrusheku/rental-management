@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 
+import com.rental_management.dto.OwnerMessageDTO;
 import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.UserMessageDTO;
 import com.rental_management.service.UserMessageService;
@@ -53,5 +54,11 @@ public class UserMessageController {
     public ResponseEntity<ResponseBody> createMessageByUser(@PathVariable Long userId, @RequestBody List<UserMessageDTO> messages) {
         ResponseBody userMessageDTO = userMessageService.createMessageByUser(userId, messages);
         return new ResponseEntity<>(userMessageDTO, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/updateMessage")
+    public ResponseEntity<ResponseBody> updateMessageByOwner(@RequestParam Long userId, @RequestParam Long messageId, @RequestBody List<UserMessageDTO> messageList){
+        ResponseBody updateMessage = userMessageService.updateMessageByUser(userId, messageId, messageList);
+        return new ResponseEntity<>(updateMessage, HttpStatus.OK);
     }
 }

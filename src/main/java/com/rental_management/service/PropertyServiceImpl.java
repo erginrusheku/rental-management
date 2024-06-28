@@ -109,6 +109,7 @@ public class PropertyServiceImpl implements PropertyService {
         return responseBody;
     }
 
+
     @Override
     public Property findPropertyByOwnerId(Long ownerId, Long propertyId) {
         return propertyRepository.findPropertyByOwnerId(ownerId, propertyId);
@@ -117,6 +118,70 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property findPromotionByPropertyId(Long propertyId, Long promotionId) {
         return propertyRepository.findPromotionByPropertyId(propertyId, promotionId);
+    }
+
+    @Override
+    public ResponseBody updatePropertyByOwner(Long ownerId, Long propertyId, List<PropertyDTO> propertyList) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
+        if(existingOwner.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Owner with id: "+ ownerId +" not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Owner optionalOwner = existingOwner.get();
+
+        Optional<Property> existingProperty = propertyRepository.findById(propertyId);
+        if(existingProperty.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Property with id: "+ propertyId +" not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Property optionalProperty = existingProperty.get();
+
+        List<Property> properties = propertyList.stream().map(propertyDTO -> {
+            if(optionalProperty.getTitle() == null){
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("Property without title cannot created");
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            } else {
+             modelMapper.map(propertyDTO, optionalProperty);
+
+             double discount = (propertyDTO.getOriginalPrice() * optionalProperty.getPromotion().getDiscountOffer()) / 100;
+             double price = propertyDTO.getOriginalPrice() - discount;
+             optionalProperty.setPromotionPrice(price);
+
+             Property createProperty = propertyRepository.save(optionalProperty);
+             SuccessDTO successDTO = new SuccessDTO();
+             successDTO.setSuccess(true);
+             successDTO.setMessage("Property was updated successfully");
+             successes.add(successDTO);
+             responseBody.setSuccess(successes);
+             return createProperty;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        optionalOwner.setProperties(properties);
+        Owner savedOwner = ownerRepository.save(optionalOwner);
+
+        properties.forEach(property -> property.setOwner(savedOwner));
+        propertyRepository.saveAll(properties);
+
+        return responseBody;
     }
 
 

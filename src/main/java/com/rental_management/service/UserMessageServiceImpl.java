@@ -107,6 +107,69 @@ public class UserMessageServiceImpl implements UserMessageService{
         return responseBody;
     }
 
+    @Override
+    public ResponseBody updateMessageByUser(Long userId, Long messageId, List<UserMessageDTO> messages) {
+        ResponseBody responseBody =  new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        User optionalUser = existingUser.get();
+
+        Optional<UserMessage> existingMessage = userMessageRepository.findById(messageId);
+        if(existingMessage.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Message with id: " + messageId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        UserMessage optionalMessage = existingMessage.get();
+
+        List<UserMessage> userMessageList = messages.stream().map(userMessageDTO -> {
+           modelMapper.map(userMessageDTO, UserMessage.class);
+
+           if(optionalMessage.getContent() == null){
+               ErrorDTO errorDTO = new ErrorDTO();
+               errorDTO.setErrors(true);
+               errorDTO.setMessage("Message without content cant created");
+               errors.add(errorDTO);
+               responseBody.setError(errors);
+               return null;
+           }
+           modelMapper.map(userMessageDTO, optionalMessage);
+           optionalMessage.setTimestamp(Timestamp.from(Instant.now()));
+
+           UserMessage updatedMessage = userMessageRepository.save(optionalMessage);
+           SuccessDTO successDTO = new SuccessDTO();
+           successDTO.setSuccess(true);
+           successDTO.setMessage("Message was updated successfully");
+           successes.add(successDTO);
+           responseBody.setSuccess(successes);
+           return updatedMessage;
+        }
+
+        ).filter(Objects::nonNull).collect(Collectors.toList());
+
+        optionalUser.setMessageList(userMessageList);
+        User savedUser = userRepository.save(optionalUser);
+
+        userMessageList.forEach(userMessage -> userMessage.setUser(savedUser));
+        userMessageRepository.saveAll(userMessageList);
+
+        return responseBody;
+    }
 
 
 }

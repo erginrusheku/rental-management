@@ -135,18 +135,8 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
         OwnerMessage existingMessage = existingMessageOptional.get();
 
-        if(!existingMessage.getOwner().getId().equals(ownerId)){
-            ErrorDTO error = new ErrorDTO();
-            error.setErrors(true);
-            error.setMessage("You are not authorized to update this message");
-            errors.add(error);
-            responseBody.setError(errors);
-            return responseBody;
-        }
-
         List<OwnerMessage> messages = messageList.stream().map(messageDTO -> {
-            if(messageDTO.getContent() != null){
-                existingMessage.setContent(messageDTO.getContent());
+            if(messageDTO.getContent() == null){
                 ErrorDTO error = new ErrorDTO();
                 error.setErrors(true);
                 error.setMessage("Message couldn't be updated with new content");
@@ -155,10 +145,13 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
                 return null;
         }
 
-            OwnerMessage message = modelMapper.map(messageDTO, OwnerMessage.class);
+            modelMapper.map(messageDTO, OwnerMessage.class);
 
-            message.setTimestamp(Timestamp.from(Instant.now()));
-            OwnerMessage createMessage = ownerMessageRepository.save(message);
+            existingMessage.setTimestamp(Timestamp.from(Instant.now()));
+
+            modelMapper.map(messageDTO, existingMessage);
+
+            OwnerMessage createMessage = ownerMessageRepository.save(existingMessage);
             SuccessDTO success = new SuccessDTO();
             success.setSuccess(true);
             success.setMessage("Message updated successfully");
@@ -174,9 +167,6 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
         messages.forEach(message -> message.setOwner(savedOwner));
         messageRepository.saveAll(messages);
-
-
-
 
         return responseBody;
     }

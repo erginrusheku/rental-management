@@ -69,4 +69,10 @@ public class PropertyController {
         Property getPropertyFromPromotionId = propertyService.findPromotionByPropertyId(propertyId, promotionId);
         return new ResponseEntity<>(getPropertyFromPromotionId, HttpStatus.OK);
     }
+
+    @PutMapping("/updateProperty")
+    public ResponseEntity<ResponseBody> updatePropertyByOwner(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestBody List<PropertyDTO> propertyList){
+        ResponseBody updateProperty = propertyService.updatePropertyByOwner(ownerId,propertyId,propertyList);
+        return new ResponseEntity<>(updateProperty, HttpStatus.OK);
+    }
 }
