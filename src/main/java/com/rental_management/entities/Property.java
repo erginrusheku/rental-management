@@ -19,6 +19,7 @@ public class Property {
     private String description;
     private String location;
     private double pricePerNight;
+    private double promotionPrice;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
     private int maxOccupancy;

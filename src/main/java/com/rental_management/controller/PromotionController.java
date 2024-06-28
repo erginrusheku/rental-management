@@ -37,9 +37,9 @@ public class PromotionController {
         return new ResponseEntity<>(createdPromotions, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updatePromotion/{promotionId}")
-    ResponseEntity<PromotionDTO> updatePromotion(@PathVariable Long promotionId,@RequestBody PromotionDTO promotionDTO){
-        PromotionDTO updatedPromotion = promotionService.updatePromotion(promotionId, promotionDTO);
+    @PutMapping("/updatePromotion/{ownerId}/{propertyId}/{promotionId}")
+    ResponseEntity<ResponseBody> updatePromotion(@PathVariable Long ownerId,@PathVariable Long propertyId,@PathVariable Long promotionId,@RequestBody PromotionDTO promotionDTO){
+        ResponseBody updatedPromotion = promotionService.updatePromotionByOwnerForProperties(ownerId, propertyId, promotionId, promotionDTO);
         return new ResponseEntity<>(updatedPromotion, HttpStatus.OK);
     }
 

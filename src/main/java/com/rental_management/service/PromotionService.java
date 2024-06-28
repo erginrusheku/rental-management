@@ -9,7 +9,7 @@ public interface PromotionService {
     PromotionDTO getPromotionById(Long id);
     List<PromotionDTO> getAllPromotions();
     PromotionDTO createPromotion(PromotionDTO promotionDTO);
-    PromotionDTO updatePromotion(Long promotionId, PromotionDTO promotionDTO);
+    public ResponseBody updatePromotionByOwnerForProperties(Long ownerId, Long propertyId, Long promotionId, PromotionDTO promotionDTO);
     void deletePromotionById(Long id);
     ResponseBody createPromotionByOwnerForProperties(Long ownerId, Long propertyId, PromotionDTO promotionDTO);
 
