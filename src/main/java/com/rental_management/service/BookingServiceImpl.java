@@ -96,7 +96,7 @@ public class BookingServiceImpl implements BookingService{
             }
 
             double totalAmountByDay = booking.getDay();
-            double propertyPrice = optionalProperty.getPricePerNight();
+            double propertyPrice = optionalProperty.getOriginalPrice();
             double totalPrice = totalAmountByDay * propertyPrice;
 
             booking.setTotalPrice(totalPrice);
