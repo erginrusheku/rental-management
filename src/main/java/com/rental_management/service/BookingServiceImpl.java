@@ -17,14 +17,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
 
     private final UserRepository userRepository;
     private final PropertyRepository propertyRepository;
     private final ModelMapper modelMapper;
     private final BookingRepository bookingRepository;
 
-    public BookingServiceImpl(UserRepository userRepository, PropertyRepository propertyRepository,ModelMapper modelMapper, BookingRepository bookingRepository) {
+    public BookingServiceImpl(UserRepository userRepository, PropertyRepository propertyRepository, ModelMapper modelMapper, BookingRepository bookingRepository) {
         this.userRepository = userRepository;
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
@@ -63,10 +63,10 @@ public class BookingServiceImpl implements BookingService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<User> existingUser = userRepository.findById(userId);
-        if(existingUser.isEmpty()){
+        if (existingUser.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
-            error.setMessage("User not found: "+ userId);
+            error.setMessage("User not found: " + userId);
             errors.add(error);
             return responseBody;
         }
@@ -74,10 +74,10 @@ public class BookingServiceImpl implements BookingService{
         User optinalUser = existingUser.get();
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
-        if(existingProperty.isEmpty()){
+        if (existingProperty.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
-            error.setMessage("Property not found: "+ propertyId);
+            error.setMessage("Property not found: " + propertyId);
             errors.add(error);
             return responseBody;
         }
@@ -95,11 +95,8 @@ public class BookingServiceImpl implements BookingService{
                 return null;
             }
 
-            double totalAmountByDay = booking.getDay();
-            double propertyPrice = optionalProperty.getOriginalPrice();
-            double totalPrice = totalAmountByDay * propertyPrice;
-
-            booking.setTotalPrice(totalPrice);
+            double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+            booking.setTotalPrice(propertyPrice);
 
             if (bookingRepository.existsByProperty(optionalProperty)) {
                 ErrorDTO errorDTO = new ErrorDTO();
@@ -108,7 +105,7 @@ public class BookingServiceImpl implements BookingService{
                 errors.add(errorDTO);
                 return null;
             } else {
-                if (optinalUser.getCards().isEmpty()){
+                if (optinalUser.getCards().isEmpty()) {
                     ErrorDTO errorDTO = new ErrorDTO();
                     errorDTO.setErrors(true);
                     errorDTO.setMessage("Without a card you cannot create a booking");
@@ -143,15 +140,107 @@ public class BookingServiceImpl implements BookingService{
         modelMapper.map(savedUser, UserDTO.class);
         modelMapper.map(savedProperty, PropertyDTO.class);
 
-        return  responseBody;
+        return responseBody;
 
-        //The Card to be connected in the FE
     }
 
     @Override
     public Booking findBookingByUserId(Long userId, Long bookingId) {
 
         return bookingRepository.findBookingByUserId(userId, bookingId);
+
+    }
+
+    @Override
+    public ResponseBody updateBookingByUserForProperty(Long userId, Long propertyId, Long bookingId, List<BookingDTO> bookingList) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        User optionalUser = existingUser.get();
+
+
+        Optional<Property> existingProperty = propertyRepository.findById(propertyId);
+        if (existingProperty.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Property with id: " + propertyId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Property optionalProperty = existingProperty.get();
+
+        Optional<Booking> existingBooking = bookingRepository.findById(bookingId);
+
+        if (existingBooking.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Booking with id: " + bookingId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Booking optionalBooking = existingBooking.get();
+
+
+        List<Booking> bookings = bookingList.stream().map(bookingDTO -> {
+            modelMapper.map(bookingDTO, Booking.class);
+
+            if (optionalProperty.getMaxOccupancy() < bookingDTO.getPeopleNumber()) {
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("The number of people: " + bookingDTO.getPeopleNumber() + " is higher than maximum occupancy capacity: " + optionalProperty.getMaxOccupancy());
+                errors.add(errorDTO);
+                return null;
+            }
+
+            double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+
+            optionalBooking.setTotalPrice(propertyPrice);
+
+            modelMapper.map(bookingDTO, optionalBooking);
+
+            Booking updatedBooking = bookingRepository.save(optionalBooking);
+            SuccessDTO successDTO = new SuccessDTO();
+            successDTO.setSuccess(true);
+            successDTO.setMessage("Booking was updated successfully");
+            successes.add(successDTO);
+            responseBody.setSuccess(successes);
+
+            return updatedBooking;
+
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        optionalUser.setBookings(bookings);
+        User savedUser = userRepository.save(optionalUser);
+
+        optionalProperty.setBookings(bookings);
+        Property savedProperty = propertyRepository.save(optionalProperty);
+
+        bookings.forEach(booking -> booking.setUser(savedUser));
+        bookings.forEach(booking -> booking.setProperty(savedProperty));
+        bookingRepository.saveAll(bookings);
+
+        modelMapper.map(savedUser, UserDTO.class);
+        modelMapper.map(savedProperty, PropertyDTO.class);
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
 
     }
 }
