@@ -37,10 +37,10 @@ public class OwnerMessageController {
         return new ResponseEntity<>(messageIds, HttpStatus.OK);
     }
 
-    @PutMapping("/updateMessage/{messageId}")
-    ResponseEntity<OwnerMessageDTO> updateMessage(@PathVariable Long messageId, @RequestBody OwnerMessageDTO messageDTO){
-        OwnerMessageDTO messageAndId = messageService.updateMessage(messageId, messageDTO);
-        return new ResponseEntity<>(messageAndId, HttpStatus.OK);
+    @PutMapping("/updateMessage")
+    public ResponseEntity<ResponseBody> updateMessageByOwner(@RequestParam Long ownerId, @RequestParam Long messageId, @RequestBody List<OwnerMessageDTO> messageDTO) {
+        ResponseBody messageUpdated = messageService.updateMessageByOwner(ownerId, messageId, messageDTO);
+        return new ResponseEntity<>(messageUpdated, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteMessageId/{messageId}")
