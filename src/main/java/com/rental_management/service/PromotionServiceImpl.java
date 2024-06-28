@@ -171,8 +171,8 @@ public class PromotionServiceImpl implements PromotionService{
         promotion.setProperty(optionalProperty);
 
 
-        double discountOffer = (optionalProperty.getPricePerNight() * promotionDTO.getDiscountOffer() / 100);
-        double totalAmount = optionalProperty.getPricePerNight() - discountOffer;
+        double discountOffer = (optionalProperty.getOriginalPrice() * promotionDTO.getDiscountOffer() / 100);
+        double totalAmount = optionalProperty.getOriginalPrice() - discountOffer;
         optionalProperty.setPromotionPrice(totalAmount);
 
         if(discountOffer < 0 || discountOffer >= 100){
