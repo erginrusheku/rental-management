@@ -159,11 +159,17 @@ public class PropertyServiceImpl implements PropertyService {
                 responseBody.setError(errors);
                 return null;
             } else {
-             modelMapper.map(propertyDTO, optionalProperty);
+                modelMapper.map(propertyDTO, optionalProperty);
+
+                if(optionalProperty.getPromotion() == null){
+
+                 optionalProperty.setOriginalPrice(propertyDTO.getOriginalPrice());
+             }else {
 
              double discount = (propertyDTO.getOriginalPrice() * optionalProperty.getPromotion().getDiscountOffer()) / 100;
              double price = propertyDTO.getOriginalPrice() - discount;
              optionalProperty.setPromotionPrice(price);
+             }
 
              Property createProperty = propertyRepository.save(optionalProperty);
              SuccessDTO successDTO = new SuccessDTO();
