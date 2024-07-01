@@ -37,9 +37,9 @@ public class ReviewController {
         return new ResponseEntity<>(reviewIds, HttpStatus.OK);
     }
 
-    @PutMapping({"/updateReview/{reviewId}"})
-    ResponseEntity<ReviewDTO> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO){
-        ReviewDTO reviewAndId = reviewService.updateReview(reviewId,reviewDTO);
+    @PutMapping({"/updateReview"})
+    ResponseEntity<ResponseBody> updateReview(@RequestParam Long userId,@RequestParam Long propertyId,@RequestParam Long reviewId, @RequestBody List<ReviewDTO> reviewList){
+        ResponseBody reviewAndId = reviewService.updateReviewByUserForProperty(userId, propertyId, reviewId, reviewList);
         return new ResponseEntity<>(reviewAndId, HttpStatus.OK);
     }
 

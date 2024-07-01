@@ -44,11 +44,6 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public ReviewDTO updateReview(Long messageId, ReviewDTO reviewDTO) {
-        return null;
-    }
-
-    @Override
     public void deleteReview(Long reviewId) {
 
     }
@@ -118,6 +113,83 @@ public class ReviewServiceImpl implements ReviewService{
         modelMapper.map(savedUser, UserDTO.class);
         modelMapper.map(savedProperty, PropertyDTO.class);
 
+
+        return responseBody;
+    }
+
+    @Override
+    public ResponseBody updateReviewByUserForProperty(Long userId, Long propertyId, Long reviewId, List<ReviewDTO> reviewList) {
+        ResponseBody responseBody = new ResponseBody();
+        List<SuccessDTO> successes = new ArrayList<>();
+        List<ErrorDTO> errors = new ArrayList<>();
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("User could not be found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        User existingUser = optionalUser.get();
+
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        if(optionalProperty.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Property could not be found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Property existingProperty = optionalProperty.get();
+
+        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+        if(optionalReview.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Property could not be found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Review existingReview = optionalReview.get();
+
+        List<Review> reviews = reviewList.stream().map(reviewDTO -> {
+            if(existingReview.getComment() == null){
+                ErrorDTO error = new ErrorDTO();
+                error.setErrors(true);
+                error.setMessage("You can't create a review without a comment");
+                errors.add(error);
+                responseBody.setError(errors);
+                return null;
+            }
+            existingReview.setDate(Date.from(Instant.now()));
+            modelMapper.map(reviewDTO, existingReview);
+
+            Review updatedReview = reviewRepository.save(existingReview);
+            SuccessDTO success = new SuccessDTO();
+            success.setSuccess(true);
+            success.setMessage("Review with id: " + reviewId + " was updated successfully");
+            successes.add(success);
+            responseBody.setSuccess(successes);
+            return updatedReview;
+
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        existingUser.setReviews(reviews);
+        User savedUser = userRepository.save(existingUser);
+        existingProperty.setReviews(reviews);
+        Property savedProperty = propertyRepository.save(existingProperty);
+
+        reviews.forEach(review -> review.setUser(savedUser));
+        reviews.forEach(review -> review.setProperty(savedProperty));
+
+        reviewRepository.saveAll(reviews);
 
         return responseBody;
     }
