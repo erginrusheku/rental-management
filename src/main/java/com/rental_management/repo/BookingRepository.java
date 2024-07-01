@@ -14,5 +14,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking b WHERE b.user.id = :userId AND b.bookingId = :bookingId")
     Booking findBookingByUserId(@Param("userId") Long userId, @Param("bookingId") Long bookingId);
 
-    boolean existsByPropertyAndCheckInDateBetween(Property property, Date checkInDate, Date checkOutDate);
+    @Query("SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END FROM Booking b WHERE b.property.propertyId = :propertyId AND (b.checkInDate < :checkOutDate AND b.checkOutDate > :checkInDate)")
+    boolean existsByPropertyIdAndOverlappingDates(@Param("propertyId") Long propertyId, @Param("checkInDate") Date checkInDate, @Param("checkOutDate") Date checkOutDate);
    }

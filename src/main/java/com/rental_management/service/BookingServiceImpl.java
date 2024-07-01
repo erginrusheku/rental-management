@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
             }
 
 
-            if (bookingRepository.existsByPropertyAndCheckInDateBetween(optionalProperty,bookingDTO.getCheckInDate(),bookingDTO.getCheckOutDate())) {
+            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), bookingDTO.getCheckInDate(),bookingDTO.getCheckOutDate())) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
