@@ -100,11 +100,11 @@ public class BookingServiceImpl implements BookingService {
                 return null;
             }
 
-            booking.setCheckInDate(Date.from(Instant.now()));
-            LocalDate checkIn = booking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
-            Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
-            booking.setCheckOutDate(Date.from(instant));
+                booking.setCheckInDate(Date.from(Instant.now()));
+                LocalDate checkIn = booking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
+                Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                booking.setCheckOutDate(Date.from(instant));
 
             if(optionalProperty.getPromotion() == null){
 
@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
             }
 
 
-            if (bookingRepository.existsByProperty(optionalProperty)) {
+            if (bookingRepository.existsByPropertyAndCheckInDateBetween(optionalProperty,bookingDTO.getCheckInDate(),bookingDTO.getCheckOutDate())) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
@@ -139,6 +139,9 @@ public class BookingServiceImpl implements BookingService {
                     responseBody.setError(errors);
                     return null;
                 }
+
+
+
                 Booking createdBooking = bookingRepository.save(booking);
 
                 SuccessDTO successDTO = new SuccessDTO();
@@ -148,6 +151,7 @@ public class BookingServiceImpl implements BookingService {
                 return createdBooking;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
+
 
 
         optinalUser.setBookings(bookings);
