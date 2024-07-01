@@ -84,6 +84,15 @@ public class ReviewServiceImpl implements ReviewService{
 
         List<Review> reviews = reviewList.stream().map(reviewDTO -> {
             Review review = modelMapper.map(reviewDTO, Review.class);
+
+            if(review.getComment() == null){
+                ErrorDTO  errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("You can't create a review without a comment");
+                errorList.add(errorDTO);
+                responseBody.setError(errorList);
+                return null;
+            }
             review.setDate(Date.from(Instant.now()));
 
             Review createReview = reviewRepository.save(review);
