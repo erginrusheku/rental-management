@@ -1,5 +1,6 @@
 package com.rental_management.service;
 
+import com.rental_management.controller.BookingController;
 import com.rental_management.dto.*;
 import com.rental_management.entities.Booking;
 import com.rental_management.entities.Property;
@@ -10,10 +11,10 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,11 +25,13 @@ public class BookingServiceImpl implements BookingService {
     private final ModelMapper modelMapper;
     private final BookingRepository bookingRepository;
 
+
     public BookingServiceImpl(UserRepository userRepository, PropertyRepository propertyRepository, ModelMapper modelMapper, BookingRepository bookingRepository) {
         this.userRepository = userRepository;
         this.propertyRepository = propertyRepository;
         this.modelMapper = modelMapper;
         this.bookingRepository = bookingRepository;
+
     }
 
     @Override
@@ -68,6 +71,7 @@ public class BookingServiceImpl implements BookingService {
             error.setErrors(true);
             error.setMessage("User not found: " + userId);
             errors.add(error);
+            responseBody.setError(errors);
             return responseBody;
         }
 
@@ -79,6 +83,7 @@ public class BookingServiceImpl implements BookingService {
             error.setErrors(true);
             error.setMessage("Property not found: " + propertyId);
             errors.add(error);
+            responseBody.setError(errors);
             return responseBody;
         }
 
@@ -95,8 +100,29 @@ public class BookingServiceImpl implements BookingService {
                 return null;
             }
 
-            double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-            booking.setTotalPrice(propertyPrice);
+            booking.setCheckInDate(Date.from(Instant.now()));
+            LocalDate checkIn = booking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
+            Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            booking.setCheckOutDate(Date.from(instant));
+
+            if(optionalProperty.getPromotion() == null){
+
+                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                booking.setTotalPrice(propertyPrice);}
+            else if(booking.getCheckOutDate().after(optionalProperty.getPromotion().getEndDate())){
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "
+                        + optionalProperty.getPromotion().getEndDate()+" is no longer available for this booking day: "+ booking.getCheckOutDate());
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            } else {
+                double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
+                booking.setTotalPrice(propertyPrice1);
+            }
+
 
             if (bookingRepository.existsByProperty(optionalProperty)) {
                 ErrorDTO errorDTO = new ErrorDTO();
@@ -207,11 +233,32 @@ public class BookingServiceImpl implements BookingService {
                 return null;
             }
 
-            double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-
-            optionalBooking.setTotalPrice(propertyPrice);
-
             modelMapper.map(bookingDTO, optionalBooking);
+
+            optionalBooking.setCheckInDate(Date.from(Instant.now()));
+            LocalDate checkIn = optionalBooking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
+            Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            optionalBooking.setCheckOutDate(Date.from(instant));
+
+            if(optionalProperty.getPromotion() == null){
+
+                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                optionalBooking.setTotalPrice(propertyPrice);}
+            else if(optionalBooking.getCheckOutDate().after(optionalProperty.getPromotion().getEndDate())){
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "
+                        + optionalProperty.getPromotion().getEndDate()+" is no longer available for this booking day: "+ optionalBooking.getCheckOutDate());
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            } else {
+                double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
+                optionalBooking.setTotalPrice(propertyPrice1);
+            }
+
+
 
             Booking updatedBooking = bookingRepository.save(optionalBooking);
             SuccessDTO successDTO = new SuccessDTO();
