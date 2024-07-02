@@ -261,7 +261,7 @@ public class BookingServiceImpl implements BookingService {
 
             modelMapper.map(bookingDTO, optionalBooking);
 
-            optionalBooking.setCheckInDate(optionalBooking.getCheckOutDate());
+            optionalBooking.setCheckInDate(bookingDTO.getCheckInDate());
             LocalDate checkIn = optionalBooking.getCheckInDate();
             LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
             optionalBooking.setCheckOutDate(checkOut);
@@ -307,8 +307,13 @@ public class BookingServiceImpl implements BookingService {
                     optionalBooking.setTotalPrice(total);
                 }
             }
-
-
+            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), optionalBooking.getCheckInDate(),optionalBooking.getCheckOutDate())) {
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
+                errors.add(errorDTO);
+                return null;
+            }
 
             Booking updatedBooking = bookingRepository.save(optionalBooking);
             SuccessDTO successDTO = new SuccessDTO();
