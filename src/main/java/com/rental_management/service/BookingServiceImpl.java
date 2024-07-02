@@ -1,6 +1,5 @@
 package com.rental_management.service;
 
-
 import com.rental_management.dto.*;
 import com.rental_management.entities.Booking;
 import com.rental_management.entities.Property;
@@ -11,9 +10,7 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
