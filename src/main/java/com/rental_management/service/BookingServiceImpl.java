@@ -136,7 +136,7 @@ public class BookingServiceImpl implements BookingService {
                     // Days after the promotion ends
                     if (checkOutDate.isAfter(promotionEndDate)) {
                         LocalDate startAfterPromotion = promotionEndDate.plusDays(1);
-                        long daysAfterPromotion = ChronoUnit.DAYS.between(startAfterPromotion, checkOutDate.plusDays(1));
+                        long daysAfterPromotion = ChronoUnit.DAYS.between(startAfterPromotion, checkOutDate.minusDays(0));
                         total += optionalProperty.getOriginalPrice() * daysAfterPromotion;
                     }
 
@@ -145,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
             }
 
 
-            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), bookingDTO.getCheckInDate(),bookingDTO.getCheckOutDate())) {
+            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), booking.getCheckInDate(),booking.getCheckOutDate())) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
@@ -263,21 +263,46 @@ public class BookingServiceImpl implements BookingService {
             LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
             optionalBooking.setCheckOutDate(checkOut);
 
-            if(optionalProperty.getPromotion() == null){
 
+            if (optionalProperty.getPromotion() == null) {
                 double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-                optionalBooking.setTotalPrice(propertyPrice);}
-            else if(optionalBooking.getCheckOutDate().isAfter(optionalProperty.getPromotion().getEndDate())){
-                ErrorDTO errorDTO = new ErrorDTO();
-                errorDTO.setErrors(true);
-                errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "
-                        + optionalProperty.getPromotion().getEndDate()+" is no longer available for this booking day: "+ optionalBooking.getCheckOutDate());
-                errors.add(errorDTO);
-                responseBody.setError(errors);
-                return null;
+                optionalBooking.setTotalPrice(propertyPrice);
             } else {
-                double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
-                optionalBooking.setTotalPrice(propertyPrice1);
+                LocalDate checkInDate = optionalBooking.getCheckInDate();
+                LocalDate checkOutDate = optionalBooking.getCheckOutDate();
+                LocalDate promotionStartDate = optionalProperty.getPromotion().getStartDate();
+                LocalDate promotionEndDate = optionalProperty.getPromotion().getEndDate();
+
+                if (checkOutDate.isBefore(promotionStartDate) || checkInDate.isAfter(promotionEndDate)) {
+                    double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                    optionalBooking.setTotalPrice(propertyPrice);
+                } else {
+                    double total = 0.0;
+
+                    // Days before the promotion starts
+                    if (checkInDate.isBefore(promotionStartDate)) {
+                        LocalDate endBeforePromotion = promotionStartDate.minusDays(1);
+                        long daysBeforePromotion = Math.min(bookingDTO.getDay(), ChronoUnit.DAYS.between(checkInDate, endBeforePromotion.plusDays(1)));
+                        total += optionalProperty.getOriginalPrice() * daysBeforePromotion;
+                    }
+
+                    // Days during the promotion period
+                    LocalDate startDuringPromotion = checkInDate.isAfter(promotionStartDate) ? checkInDate : promotionStartDate;
+                    LocalDate endDuringPromotion = checkOutDate.isBefore(promotionEndDate) ? checkOutDate : promotionEndDate;
+                    if (!startDuringPromotion.isAfter(endDuringPromotion)) {
+                        long daysDuringPromotion = ChronoUnit.DAYS.between(startDuringPromotion, endDuringPromotion.plusDays(1));
+                        total += optionalProperty.getPromotionPrice() * daysDuringPromotion;
+                    }
+
+                    // Days after the promotion ends
+                    if (checkOutDate.isAfter(promotionEndDate)) {
+                        LocalDate startAfterPromotion = promotionEndDate.plusDays(1);
+                        long daysAfterPromotion = ChronoUnit.DAYS.between(startAfterPromotion, checkOutDate.minusDays(0));
+                        total += optionalProperty.getOriginalPrice() * daysAfterPromotion;
+                    }
+
+                    optionalBooking.setTotalPrice(total);
+                }
             }
 
 
