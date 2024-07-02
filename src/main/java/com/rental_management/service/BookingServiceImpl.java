@@ -1,6 +1,6 @@
 package com.rental_management.service;
 
-import com.rental_management.controller.BookingController;
+
 import com.rental_management.dto.*;
 import com.rental_management.entities.Booking;
 import com.rental_management.entities.Property;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -101,33 +102,49 @@ public class BookingServiceImpl implements BookingService {
             }
 
                 booking.setCheckInDate(bookingDTO.getCheckInDate());
-                LocalDate checkIn = booking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate checkIn = booking.getCheckInDate();
                 LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
-                Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
-                booking.setCheckOutDate(Date.from(instant));
+                booking.setCheckOutDate(checkOut);
 
-            if(optionalProperty.getPromotion() == null){
-
+            if (optionalProperty.getPromotion() == null) {
                 double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
                 booking.setTotalPrice(propertyPrice);
-            }
-            else if(booking.getCheckOutDate().after(optionalProperty.getPromotion().getEndDate())){
+            } else {
+                LocalDate checkInDate = booking.getCheckInDate();
+                LocalDate checkOutDate = booking.getCheckOutDate();
+                LocalDate promotionStartDate = optionalProperty.getPromotion().getStartDate();
+                LocalDate promotionEndDate = optionalProperty.getPromotion().getEndDate();
 
-                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-                booking.setTotalPrice(propertyPrice);
+                if (checkOutDate.isBefore(promotionStartDate) || checkInDate.isAfter(promotionEndDate)) {
+                    double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                    booking.setTotalPrice(propertyPrice);
+                } else {
+                    double total = 0.0;
 
-            } else if (booking.getCheckOutDate().before(optionalProperty.getPromotion().getStartDate())) {
+                    // Days before the promotion starts
+                    if (checkInDate.isBefore(promotionStartDate)) {
+                        LocalDate endBeforePromotion = promotionStartDate.minusDays(1);
+                        long daysBeforePromotion = Math.min(bookingDTO.getDay(), ChronoUnit.DAYS.between(checkInDate, endBeforePromotion.plusDays(1)));
+                        total += optionalProperty.getOriginalPrice() * daysBeforePromotion;
+                    }
 
-                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-                booking.setTotalPrice(propertyPrice);
+                    // Days during the promotion period
+                    LocalDate startDuringPromotion = checkInDate.isAfter(promotionStartDate) ? checkInDate : promotionStartDate;
+                    LocalDate endDuringPromotion = checkOutDate.isBefore(promotionEndDate) ? checkOutDate : promotionEndDate;
+                    if (!startDuringPromotion.isAfter(endDuringPromotion)) {
+                        long daysDuringPromotion = ChronoUnit.DAYS.between(startDuringPromotion, endDuringPromotion.plusDays(1));
+                        total += optionalProperty.getPromotionPrice() * daysDuringPromotion;
+                    }
 
-            } else if (booking.getCheckInDate().before(optionalProperty.getPromotion().getStartDate())) {
-                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-                booking.setTotalPrice(propertyPrice);
+                    // Days after the promotion ends
+                    if (checkOutDate.isAfter(promotionEndDate)) {
+                        LocalDate startAfterPromotion = promotionEndDate.plusDays(1);
+                        long daysAfterPromotion = ChronoUnit.DAYS.between(startAfterPromotion, checkOutDate.plusDays(1));
+                        total += optionalProperty.getOriginalPrice() * daysAfterPromotion;
+                    }
 
-            } else if(booking.getCheckOutDate().before(optionalProperty.getPromotion().getEndDate())) {
-                double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
-                booking.setTotalPrice(propertyPrice1);
+                    booking.setTotalPrice(total);
+                }
             }
 
 
@@ -244,17 +261,16 @@ public class BookingServiceImpl implements BookingService {
 
             modelMapper.map(bookingDTO, optionalBooking);
 
-            optionalBooking.setCheckInDate(Date.from(Instant.now()));
-            LocalDate checkIn = optionalBooking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            optionalBooking.setCheckInDate(optionalBooking.getCheckOutDate());
+            LocalDate checkIn = optionalBooking.getCheckInDate();
             LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
-            Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
-            optionalBooking.setCheckOutDate(Date.from(instant));
+            optionalBooking.setCheckOutDate(checkOut);
 
             if(optionalProperty.getPromotion() == null){
 
                 double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
                 optionalBooking.setTotalPrice(propertyPrice);}
-            else if(optionalBooking.getCheckOutDate().after(optionalProperty.getPromotion().getEndDate())){
+            else if(optionalBooking.getCheckOutDate().isAfter(optionalProperty.getPromotion().getEndDate())){
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "

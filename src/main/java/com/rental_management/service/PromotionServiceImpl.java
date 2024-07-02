@@ -109,11 +109,10 @@ public class PromotionServiceImpl implements PromotionService{
             return responseBody;
         }
 
-        optionalPromotion.setStartDate(Date.from(Instant.now()));
-        LocalDate startDate = optionalPromotion.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        optionalPromotion.setStartDate(promotionDTO.getStartDate());
+        LocalDate startDate = optionalPromotion.getStartDate();
         LocalDate endDate = startDate.plusDays(promotionDTO.getPromotionDays());
-        Instant instant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        optionalPromotion.setEndDate(Date.from(instant));
+        optionalPromotion.setEndDate(endDate);
 
         modelMapper.map(promotionDTO, optionalPromotion);
 
@@ -184,13 +183,12 @@ public class PromotionServiceImpl implements PromotionService{
             return responseBody;
         }
 
-        promotion.setStartDate(Date.from(Instant.now()));
-        LocalDate startDate = promotion.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        promotion.setStartDate(promotionDTO.getStartDate());
+        LocalDate startDate = promotion.getStartDate();
         LocalDate endDate = startDate.plusDays(promotionDTO.getPromotionDays());
-        Instant instant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        promotion.setEndDate(Date.from(instant));
+        promotion.setEndDate(endDate);
 
-        if(promotion.getStartDate().after(promotion.getEndDate())){
+        if(promotion.getStartDate().isAfter(promotion.getEndDate())){
             optionalProperty.setPromotionPrice(0);
         }
 
