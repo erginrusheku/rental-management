@@ -261,10 +261,11 @@ public class BookingServiceImpl implements BookingService {
 
             modelMapper.map(bookingDTO, optionalBooking);
 
-            optionalBooking.setCheckInDate(bookingDTO.getCheckInDate());
+            optionalBooking.setCheckInDate(optionalBooking.getCheckInDate());
             LocalDate checkIn = optionalBooking.getCheckInDate();
             LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
             optionalBooking.setCheckOutDate(checkOut);
+
 
 
             if (optionalProperty.getPromotion() == null) {
@@ -307,13 +308,25 @@ public class BookingServiceImpl implements BookingService {
                     optionalBooking.setTotalPrice(total);
                 }
             }
-            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), optionalBooking.getCheckInDate(),optionalBooking.getCheckOutDate())) {
+
+            if(optionalProperty.getPromotion() == null){
+
+                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                optionalBooking.setTotalPrice(propertyPrice);}
+            else if(optionalBooking.getCheckOutDate().isAfter(optionalProperty.getPromotion().getEndDate())){
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
-                errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
+                errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "
+                        + optionalProperty.getPromotion().getEndDate()+" is no longer available for this booking day: "+ optionalBooking.getCheckOutDate());
                 errors.add(errorDTO);
+                responseBody.setError(errors);
                 return null;
+            } else {
+                double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
+                optionalBooking.setTotalPrice(propertyPrice1);
             }
+
+
 
             Booking updatedBooking = bookingRepository.save(optionalBooking);
             SuccessDTO successDTO = new SuccessDTO();
