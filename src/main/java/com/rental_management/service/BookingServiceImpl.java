@@ -100,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
                 return null;
             }
 
-                booking.setCheckInDate(Date.from(Instant.now()));
+                booking.setCheckInDate(bookingDTO.getCheckInDate());
                 LocalDate checkIn = booking.getCheckInDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
                 Instant instant = checkOut.atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -109,16 +109,23 @@ public class BookingServiceImpl implements BookingService {
             if(optionalProperty.getPromotion() == null){
 
                 double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-                booking.setTotalPrice(propertyPrice);}
+                booking.setTotalPrice(propertyPrice);
+            }
             else if(booking.getCheckOutDate().after(optionalProperty.getPromotion().getEndDate())){
-                ErrorDTO errorDTO = new ErrorDTO();
-                errorDTO.setErrors(true);
-                errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "
-                        + optionalProperty.getPromotion().getEndDate()+" is no longer available for this booking day: "+ booking.getCheckOutDate());
-                errors.add(errorDTO);
-                responseBody.setError(errors);
-                return null;
-            } else {
+
+                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                booking.setTotalPrice(propertyPrice);
+
+            } else if (booking.getCheckOutDate().before(optionalProperty.getPromotion().getStartDate())) {
+
+                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                booking.setTotalPrice(propertyPrice);
+
+            } else if (booking.getCheckInDate().before(optionalProperty.getPromotion().getStartDate())) {
+                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
+                booking.setTotalPrice(propertyPrice);
+
+            } else if(booking.getCheckOutDate().before(optionalProperty.getPromotion().getEndDate())) {
                 double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
                 booking.setTotalPrice(propertyPrice1);
             }
@@ -139,8 +146,6 @@ public class BookingServiceImpl implements BookingService {
                     responseBody.setError(errors);
                     return null;
                 }
-
-
 
                 Booking createdBooking = bookingRepository.save(booking);
 
