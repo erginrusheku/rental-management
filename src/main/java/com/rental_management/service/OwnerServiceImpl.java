@@ -110,8 +110,19 @@ public class OwnerServiceImpl implements OwnerService{
     }
 
     @Override
-    public void deleteOwnerById(Long id) {
+    public ResponseBody deleteOwnerById(Long id) {
+        ResponseBody responseBody = new ResponseBody();
+        List<SuccessDTO> successes = new ArrayList<>();
 
+
+        ownerRepository.deleteById(id);
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Owner was deleted successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
     }
 }
 

@@ -84,6 +84,9 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
             message.setTimestamp(Timestamp.from(Instant.now()));
             OwnerMessage createMessage = messageRepository.save(message);
+            createMessage.setOwner(optionalOwner);
+            optionalOwner.getMessageList().add(createMessage);
+
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
             successDTO.setMessage("The message was created successfully");
@@ -93,13 +96,13 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        optionalOwner.setMessageList(messages);
-        Owner saveOwner = ownerRepository.save(optionalOwner);
+        //optionalOwner.setMessageList(messages);
+         ownerRepository.save(optionalOwner);
 
-        messages.forEach(message -> message.setOwner(saveOwner));
+        //messages.forEach(message -> message.setOwner(saveOwner));
         messageRepository.saveAll(messages);
 
-        modelMapper.map(saveOwner, OwnerDTO.class);
+       //modelMapper.map(saveOwner, OwnerDTO.class);
 
         return responseBody;
     }
@@ -152,6 +155,9 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
             modelMapper.map(messageDTO, existingMessage);
 
             OwnerMessage createMessage = ownerMessageRepository.save(existingMessage);
+            createMessage.setOwner(optionalOwner);
+            optionalOwner.getMessageList().add(createMessage);
+
             SuccessDTO success = new SuccessDTO();
             success.setSuccess(true);
             success.setMessage("Message updated successfully");
@@ -162,11 +168,52 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        optionalOwner.setMessageList(messages);
-        Owner savedOwner = ownerRepository.save(optionalOwner);
+        //optionalOwner.setMessageList(messages);
+         ownerRepository.save(optionalOwner);
 
-        messages.forEach(message -> message.setOwner(savedOwner));
-        messageRepository.saveAll(messages);
+        //messages.forEach(message -> message.setOwner(savedOwner));
+         messageRepository.saveAll(messages);
+
+        return responseBody;
+    }
+
+    @Override
+    public ResponseBody deleteOwnerMessage(Long ownerId, Long messageId) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
+        if(optionalOwner.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Owner with id: "+ ownerId+" not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Owner existingOwner = optionalOwner.get();
+
+        Optional<OwnerMessage> optionalOwnerMessage = messageRepository.findById(messageId);
+        if(optionalOwnerMessage.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Message with id: "+ messageId +" not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+        OwnerMessage existingMessage = optionalOwnerMessage.get();
+
+        existingOwner.getMessageList().remove(existingMessage);
+
+        messageRepository.deleteById(existingMessage.getMessageId());
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Message was deleted successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
 
         return responseBody;
     }

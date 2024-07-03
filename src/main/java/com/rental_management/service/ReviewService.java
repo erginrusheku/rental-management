@@ -12,4 +12,5 @@ public interface ReviewService {
     void deleteReview(Long reviewId);
     ResponseBody createReviewByUserForProperty(Long userId, Long propertyId, List<ReviewDTO> reviewList);
     ResponseBody updateReviewByUserForProperty(Long userId, Long propertyId, Long reviewId, List<ReviewDTO> reviewList);
+    ResponseBody deleteReview(Long userId, Long propertyId, Long reviewId);
 }

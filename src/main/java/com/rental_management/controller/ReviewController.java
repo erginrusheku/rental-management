@@ -54,4 +54,10 @@ public class ReviewController {
         ResponseBody createReview = reviewService.createReviewByUserForProperty(userId,propertyId,reviewList);
         return new ResponseEntity<>(createReview, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/deleteReview")
+    ResponseEntity<ResponseBody> deleteReview(@RequestParam Long userId,@RequestParam Long propertyId, @RequestParam Long reviewId){
+        ResponseBody deleteReview = reviewService.deleteReview(userId,propertyId,reviewId);
+        return new ResponseEntity<>(deleteReview, HttpStatus.OK);
+    }
 }

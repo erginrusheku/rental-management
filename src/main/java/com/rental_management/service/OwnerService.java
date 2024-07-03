@@ -11,5 +11,5 @@ public interface OwnerService {
     List<OwnerDTO> getAllOwners();
     ResponseBody createOwner(OwnerDTO ownerDTO);
     ResponseBody updateOwner(Long ownerId, OwnerDTO ownerDTO);
-    void deleteOwnerById(Long id);
+    ResponseBody deleteOwnerById(Long id);
 }

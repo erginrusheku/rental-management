@@ -16,6 +16,6 @@ public interface PropertyService {
     Property findPropertyByOwnerId(Long ownerId, Long propertyId);
     Property findPromotionByPropertyId(Long propertyId, Long promotionId);
     ResponseBody updatePropertyByOwner(Long ownerId, Long propertyId, List<PropertyDTO> propertyList);
-    void deleteProperty(Long ownerId, Long propertyId);
+    ResponseBody deleteProperty(Long ownerId, Long propertyId);
 
 }

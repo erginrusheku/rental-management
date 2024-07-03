@@ -117,6 +117,10 @@ public class PromotionServiceImpl implements PromotionService{
         modelMapper.map(promotionDTO, optionalPromotion);
 
         promotionRepository.save(optionalPromotion);
+        promotion.setOwner(optionalOwner);
+        promotion.setProperty(optionalProperty);
+        optionalOwner.getPromotions().add(promotion);
+        optionalProperty.setPromotion(promotion);
 
         SuccessDTO success = new SuccessDTO();
         success.setSuccess(true);
@@ -169,7 +173,6 @@ public class PromotionServiceImpl implements PromotionService{
         promotion.setOwner(optionalOwner);
         promotion.setProperty(optionalProperty);
 
-
         double discountOffer = (optionalProperty.getOriginalPrice() * promotionDTO.getDiscountOffer() / 100);
         double totalAmount = optionalProperty.getOriginalPrice() - discountOffer;
         optionalProperty.setPromotionPrice(totalAmount);
@@ -193,12 +196,78 @@ public class PromotionServiceImpl implements PromotionService{
         }
 
         Promotion savedPromotion = promotionRepository.save(promotion);
+        savedPromotion.setOwner(optionalOwner);
+        savedPromotion.setProperty(optionalProperty);
+        optionalOwner.getPromotions().add(savedPromotion);
+        optionalProperty.setPromotion(savedPromotion);
+
         modelMapper.map(savedPromotion, PromotionDTO.class);
 
         SuccessDTO success = new SuccessDTO();
         success.setSuccess(true);
         success.setMessage("Promotion created successfully");
         successes.add(success);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
+    }
+
+    @Override
+    public ResponseBody deletePromotion(Long ownerId, Long propertyId, Long promotionId) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
+        if(existingOwner.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Owner not found with id: " + ownerId);
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Owner optionalOwner = existingOwner.get();
+
+
+        Optional<Property> existingProperty = propertyRepository.findById(propertyId);
+
+        if(existingProperty.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Property not found with id: " + propertyId);
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Property optionalProperty = existingProperty.get();
+
+        Optional<Promotion> optionalPromotion = promotionRepository.findById(promotionId);
+        if (optionalPromotion.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Promotion with id: "+ promotionId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+        Promotion existingPromotion = optionalPromotion.get();
+
+        optionalOwner.getPromotions().remove(existingPromotion);
+        optionalProperty.setPromotion(null);
+
+        promotionRepository.deleteById(existingPromotion.getId());
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Promotion was deleted successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+
+        responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
         return responseBody;

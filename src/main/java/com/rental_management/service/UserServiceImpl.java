@@ -122,9 +122,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public ResponseBody deleteUser(Long id) {
+        ResponseBody responseBody = new ResponseBody();
+        List<SuccessDTO> successes = new ArrayList<>();
 
+        userRepository.deleteById(id);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("User was deleted successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
     }
+
 
     @Override
     public User getCardsByUserId(Long userId, Long cardId) {

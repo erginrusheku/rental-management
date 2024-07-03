@@ -206,27 +206,50 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional
-    public void deleteProperty(Long ownerId, Long propertyId) {
-        // Find the owner
-        Optional<Owner> ownerOptional = ownerRepository.findById(ownerId);
-        if (ownerOptional.isEmpty()) {
-            throw new EntityNotFoundException("Owner with id " + ownerId + " not found");
+    public ResponseBody deleteProperty(Long ownerId, Long propertyId) {
+
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
+        if(optionalOwner.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Owner with id: "+ ownerId +" not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
         }
-        Owner owner = ownerOptional.get();
-
-        // Find the property by id
-        Property property = owner.getProperties().stream()
-                .filter(p -> p.getPropertyId().equals(propertyId))
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Property with id " + propertyId + " not found"));
+        Owner existingOwner = optionalOwner.get();
 
 
-        // Remove property from owner's collection
-        owner.getProperties().remove(property);
-        property.setOwner(null); // Optional: Clear the owner reference from the property
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        if(optionalProperty.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Property with id: "+ propertyId +" not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
 
-        // Delete the property
-        propertyRepository.delete(property);
+        Property existingProperty = optionalProperty.get();
+
+
+        existingOwner.getProperties().remove(existingProperty);
+
+        propertyRepository.delete(existingProperty);
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Property was deleted successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
     }
 
 }

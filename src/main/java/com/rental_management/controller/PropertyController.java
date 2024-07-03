@@ -46,9 +46,10 @@ public class PropertyController {
         return new ResponseEntity<>(propertyAndId, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deletePropertyId/{ownerId}/{propertyId}")
-    void deleteProperty(@PathVariable Long ownerId, @PathVariable Long propertyId) {
-        propertyService.deleteProperty(ownerId,propertyId);
+    @DeleteMapping("/deleteProperty")
+    public ResponseEntity<ResponseBody> deleteProperty(@RequestParam Long ownerId, @RequestParam Long propertyId) {
+       ResponseBody deleteProperty = propertyService.deleteProperty(ownerId,propertyId);
+       return new ResponseEntity<>(deleteProperty, HttpStatus.OK);
     }
 
     @PostMapping("/createProperty/{ownerId}")

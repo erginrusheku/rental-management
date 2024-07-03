@@ -54,4 +54,11 @@ public class OwnerMessageController {
         ResponseBody createMessage = messageService.createMessageByOwner(ownerId, messageList);
         return new ResponseEntity<>(createMessage, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/deleteMessage")
+    public ResponseEntity<ResponseBody> deleteOwnerMessage(@RequestParam Long ownerId,@RequestParam Long messageId){
+        ResponseBody deleteMessage = messageService.deleteOwnerMessage(ownerId, messageId);
+        return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
+    }
+
 }

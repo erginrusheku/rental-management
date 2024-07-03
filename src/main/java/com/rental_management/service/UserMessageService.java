@@ -13,4 +13,5 @@ public interface UserMessageService {
     void deleteMessage(Long messageId);
     ResponseBody createMessageByUser(Long userId, List<UserMessageDTO> messages);
     ResponseBody updateMessageByUser(Long userId, Long messageId, List<UserMessageDTO> messages);
+    ResponseBody deleteMessage(Long userId, Long messageId);
 }

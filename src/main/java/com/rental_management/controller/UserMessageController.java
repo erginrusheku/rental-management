@@ -61,4 +61,10 @@ public class UserMessageController {
         ResponseBody updateMessage = userMessageService.updateMessageByUser(userId, messageId, messageList);
         return new ResponseEntity<>(updateMessage, HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteMessage")
+    ResponseEntity<ResponseBody> deleteMessage(@RequestParam Long userId,@RequestParam Long messageId){
+      ResponseBody deleteMessage = userMessageService.deleteMessage(userId, messageId);
+      return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
+    }
 }

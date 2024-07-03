@@ -91,6 +91,11 @@ public class ReviewServiceImpl implements ReviewService{
             review.setDate(Date.from(Instant.now()));
 
             Review createReview = reviewRepository.save(review);
+            createReview.setUser(optionalUser);
+            optionalUser.getReviews().add(createReview);
+            createReview.setProperty(optionalProperty);
+            optionalProperty.getReviews().add(createReview);
+
 
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
@@ -100,19 +105,12 @@ public class ReviewServiceImpl implements ReviewService{
             return createReview;
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        optionalUser.setReviews(reviews);
-        User savedUser = userRepository.save(optionalUser);
 
-        optionalProperty.setReviews(reviews);
-        Property savedProperty = propertyRepository.save(optionalProperty);
+        userRepository.save(optionalUser);
 
-        reviews.forEach(review -> review.setUser(savedUser));
-        reviews.forEach(review -> review.setProperty(savedProperty));
+        propertyRepository.save(optionalProperty);
+
         reviewRepository.saveAll(reviews);
-
-        modelMapper.map(savedUser, UserDTO.class);
-        modelMapper.map(savedProperty, PropertyDTO.class);
-
 
         return responseBody;
     }
@@ -172,6 +170,12 @@ public class ReviewServiceImpl implements ReviewService{
             modelMapper.map(reviewDTO, existingReview);
 
             Review updatedReview = reviewRepository.save(existingReview);
+
+            updatedReview.setUser(existingUser);
+            existingUser.getReviews().add(updatedReview);
+            updatedReview.setProperty(existingProperty);
+            existingProperty.getReviews().add(updatedReview);
+
             SuccessDTO success = new SuccessDTO();
             success.setSuccess(true);
             success.setMessage("Review with id: " + reviewId + " was updated successfully");
@@ -181,15 +185,71 @@ public class ReviewServiceImpl implements ReviewService{
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        existingUser.setReviews(reviews);
-        User savedUser = userRepository.save(existingUser);
-        existingProperty.setReviews(reviews);
-        Property savedProperty = propertyRepository.save(existingProperty);
 
-        reviews.forEach(review -> review.setUser(savedUser));
-        reviews.forEach(review -> review.setProperty(savedProperty));
+         userRepository.save(existingUser);
 
-        reviewRepository.saveAll(reviews);
+         propertyRepository.save(existingProperty);
+
+         reviewRepository.saveAll(reviews);
+
+        return responseBody;
+    }
+
+    public ResponseBody deleteReview(Long userId, Long propertyId, Long reviewId){
+        ResponseBody responseBody = new ResponseBody();
+        List<SuccessDTO> successes = new ArrayList<>();
+        List<ErrorDTO> errors = new ArrayList<>();
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("User could not be found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        User existingUser = optionalUser.get();
+
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        if(optionalProperty.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Property could not be found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Property existingProperty = optionalProperty.get();
+
+        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+        if(optionalReview.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Property could not be found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+
+        Review existingReview = optionalReview.get();
+
+        existingUser.getReviews().remove(existingReview);
+        existingProperty.getReviews().remove(existingReview);
+
+        reviewRepository.delete(existingReview);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Review was deleted successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
 
         return responseBody;
     }

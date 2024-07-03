@@ -86,6 +86,10 @@ public class UserMessageServiceImpl implements UserMessageService{
                     message.setTimestamp(Timestamp.from(Instant.now()));
 
                     UserMessage createMessage = userMessageRepository.save(message);
+
+                    createMessage.setUser(optionalUser);
+                    optionalUser.getMessageList().add(createMessage);
+
                     SuccessDTO success = new SuccessDTO();
                     success.setSuccess(true);
                     success.setMessage("The message was created successfully");
@@ -96,13 +100,13 @@ public class UserMessageServiceImpl implements UserMessageService{
                 }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        optionalUser.setMessageList(messageList);
-        User savedUser = userRepository.save(optionalUser);
+       // optionalUser.setMessageList(messageList);
+        userRepository.save(optionalUser);
 
-        messageList.forEach(message -> message.setUser(savedUser));
+        //messageList.forEach(message -> message.setUser(savedUser));
         userMessageRepository.saveAll(messageList);
 
-        modelMapper.map(savedUser, UserDTO.class);
+        //modelMapper.map(savedUser, UserDTO.class);
 
         return responseBody;
     }
@@ -152,6 +156,10 @@ public class UserMessageServiceImpl implements UserMessageService{
            optionalMessage.setTimestamp(Timestamp.from(Instant.now()));
 
            UserMessage updatedMessage = userMessageRepository.save(optionalMessage);
+
+           updatedMessage.setUser(optionalUser);
+           optionalUser.getMessageList().add(updatedMessage);
+
            SuccessDTO successDTO = new SuccessDTO();
            successDTO.setSuccess(true);
            successDTO.setMessage("Message was updated successfully");
@@ -162,13 +170,50 @@ public class UserMessageServiceImpl implements UserMessageService{
 
         ).filter(Objects::nonNull).collect(Collectors.toList());
 
-        optionalUser.setMessageList(userMessageList);
-        User savedUser = userRepository.save(optionalUser);
+        //optionalUser.setMessageList(userMessageList);
+        userRepository.save(optionalUser);
 
-        userMessageList.forEach(userMessage -> userMessage.setUser(savedUser));
+        //userMessageList.forEach(userMessage -> userMessage.setUser(savedUser));
         userMessageRepository.saveAll(userMessageList);
 
         return responseBody;
+    }
+
+    public ResponseBody deleteMessage(Long userId, Long messageId){
+        ResponseBody responseBody =  new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        User optionalUser = existingUser.get();
+
+        Optional<UserMessage> existingMessage = userMessageRepository.findById(messageId);
+        if(existingMessage.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Message with id: " + messageId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        UserMessage optionalMessage = existingMessage.get();
+
+        optionalUser.getMessageList().remove(optionalMessage);
+
+        userMessageRepository.delete(optionalMessage);
+
+        return responseBody;
+
     }
 
 

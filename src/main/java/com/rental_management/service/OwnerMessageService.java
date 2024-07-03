@@ -14,4 +14,5 @@ public interface OwnerMessageService {
     void deleteMessage(Long messageId);
     ResponseBody createMessageByOwner(Long ownerId, List<OwnerMessageDTO> messageList);
     ResponseBody updateMessageByOwner(Long ownerId, Long messageId,List<OwnerMessageDTO> messageDTO);
+    ResponseBody deleteOwnerMessage(Long ownerId, Long messageId);
 }

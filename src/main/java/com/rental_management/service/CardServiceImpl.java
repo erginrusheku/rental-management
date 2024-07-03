@@ -230,6 +230,7 @@ public class CardServiceImpl implements CardService{
             errorDTO.setMessage("Card with id: " + cardId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
+            return responseBody;
         }
 
         Card existingCard = optionalCard.get();
