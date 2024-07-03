@@ -53,11 +53,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void deleteById(Long bookingId) {
-
-    }
-
-    @Override
     public ResponseBody createBookingByUserForProperty(Long userId, Long propertyId, List<BookingDTO> bookingList) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
@@ -341,5 +336,10 @@ public class BookingServiceImpl implements BookingService {
 
         return responseBody;
 
+    }
+
+    @Override
+    public void deleteById(Long bookingId) {
+        bookingRepository.deleteById(bookingId);
     }
 }
