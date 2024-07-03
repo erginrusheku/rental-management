@@ -13,6 +13,8 @@ public interface CardService {
     void deleteCardById(Long id);
     ResponseBody createCardByUser(Long userId, List<CardDTO> cardDTO);
     ResponseBody updateCardByUser(Long userId, Long cardId, List<CardDTO> cardList);
+    ResponseBody deleteCardByUser(Long userId, Long cardId);
+
 
 
 }
