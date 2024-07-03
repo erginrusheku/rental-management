@@ -195,8 +195,8 @@ public class PropertyServiceImpl implements PropertyService {
         //optionalOwner.setProperties(properties);
         ownerRepository.save(optionalOwner);
 
-        /*properties.forEach(property -> property.setOwner(savedOwner));
-        propertyRepository.saveAll(properties);*/
+        //properties.forEach(property -> property.setOwner(savedOwner));
+        propertyRepository.saveAll(properties);
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
