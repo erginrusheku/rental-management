@@ -33,7 +33,7 @@ public class UserMessageController {
     }
 
     @PostMapping("/createMessage")
-    public ResponseEntity<ResponseBody> createMessageByUser( @RequestParam Long userId, @RequestBody List<UserMessageDTO> messages ) {
+    public ResponseEntity<ResponseBody> createMessageByUser(@RequestParam Long userId, @RequestBody List<UserMessageDTO> messages ) {
         ResponseBody userMessageDTO = userMessageService.createMessageByUser(userId, messages);
         return new ResponseEntity<>(userMessageDTO, HttpStatus.CREATED);
     }
