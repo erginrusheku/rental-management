@@ -8,8 +8,10 @@ import com.rental_management.entities.User;
 import com.rental_management.repo.BookingRepository;
 import com.rental_management.repo.PropertyRepository;
 import com.rental_management.repo.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,17 +52,10 @@ public class BookingServiceImpl implements BookingService {
         return null;
     }
 
-    @Override
-    public BookingDTO updateBooking(Long bookingId, BookingDTO bookingDTO) {
-        return null;
-    }
+
 
     @Override
-    public void deleteById(Long bookingId) {
-
-    }
-
-    @Override
+    @Transactional
     public ResponseBody createBookingByUserForProperty(Long userId, Long propertyId, List<BookingDTO> bookingList) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
@@ -164,7 +159,15 @@ public class BookingServiceImpl implements BookingService {
                     return null;
                 }
 
+                Booking booking1 = modelMapper.map(bookingDTO, Booking.class);
+                /*booking1.setProperty(optionalProperty);
+                optionalProperty.getBookings().add(booking1);
+                booking1.setUser(optinalUser);
+                optinalUser.getBookings().add(booking1);*/
                 Booking createdBooking = bookingRepository.save(booking);
+                createdBooking.setProperty(optionalProperty);
+                optionalProperty.getBookings().add(createdBooking);
+                createdBooking.setUser(optinalUser);
 
                 SuccessDTO successDTO = new SuccessDTO();
                 successDTO.setSuccess(true);
@@ -176,21 +179,20 @@ public class BookingServiceImpl implements BookingService {
 
 
 
-        optinalUser.setBookings(bookings);
-        User savedUser = userRepository.save(optinalUser);
+        //optinalUser.setBookings(bookings);
+       userRepository.save(optinalUser);
 
-        optionalProperty.setBookings(bookings);
-        Property savedProperty = propertyRepository.save(optionalProperty);
+        //optionalProperty.setBookings(bookings);
+         propertyRepository.save(optionalProperty);
 
-        bookings.forEach(booking -> booking.setUser(savedUser));
-        bookings.forEach(booking -> booking.setProperty(savedProperty));
+       // bookings.forEach(booking -> booking.setUser(savedUser));
+       // bookings.forEach(booking -> booking.setProperty(savedProperty));
         bookingRepository.saveAll(bookings);
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
-        modelMapper.map(savedUser, UserDTO.class);
-        modelMapper.map(savedProperty, PropertyDTO.class);
+
 
         return responseBody;
 
@@ -204,6 +206,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public ResponseBody updateBookingByUserForProperty(Long userId, Long propertyId, Long bookingId, List<BookingDTO> bookingList) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
@@ -315,7 +318,13 @@ public class BookingServiceImpl implements BookingService {
                 return null;
             }
 
+            modelMapper.map(bookingDTO, Booking.class);
             Booking updatedBooking = bookingRepository.save(optionalBooking);
+            updatedBooking.setUser(optionalUser);
+            optionalUser.getBookings().add(updatedBooking);
+            updatedBooking.setProperty(optionalProperty);
+            optionalProperty.getBookings().add(updatedBooking);
+
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
             successDTO.setMessage("Booking was updated successfully");
@@ -326,18 +335,17 @@ public class BookingServiceImpl implements BookingService {
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        optionalUser.setBookings(bookings);
-        User savedUser = userRepository.save(optionalUser);
+        //optionalUser.setBookings(bookings);
+        userRepository.save(optionalUser);
 
-        optionalProperty.setBookings(bookings);
-        Property savedProperty = propertyRepository.save(optionalProperty);
+        //optionalProperty.setBookings(bookings);
+        propertyRepository.save(optionalProperty);
 
-        bookings.forEach(booking -> booking.setUser(savedUser));
-        bookings.forEach(booking -> booking.setProperty(savedProperty));
+        /*bookings.forEach(booking -> booking.setUser(savedUser));
+        bookings.forEach(booking -> booking.setProperty(savedProperty));*/
         bookingRepository.saveAll(bookings);
 
-        modelMapper.map(savedUser, UserDTO.class);
-        modelMapper.map(savedProperty, PropertyDTO.class);
+
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
@@ -345,4 +353,60 @@ public class BookingServiceImpl implements BookingService {
         return responseBody;
 
     }
+
+    @Override
+    public ResponseBody deleteBookings(Long userId, Long propertyId, Long bookingId) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+        User existingUser = optionalUser.get();
+
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        if(optionalProperty.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Property with id: " + propertyId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+            }
+        Property existingProperty = optionalProperty.get();
+
+        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
+        if (optionalBooking.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Booking with id: " + bookingId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+        Booking existingBooking = optionalBooking.get();
+
+        existingUser.getBookings().remove(existingBooking);
+        existingProperty.getBookings().remove(existingBooking);
+
+        bookingRepository.delete(existingBooking);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("The booking was deleted successfully");
+        successes.add(successDTO);
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
+    }
+
 }
