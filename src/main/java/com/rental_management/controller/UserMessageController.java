@@ -32,22 +32,16 @@ public class UserMessageController {
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
-    @GetMapping("/messageId/{messageId}")
-    ResponseEntity<UserMessageDTO> getById(@PathVariable Long messageId){
+    @GetMapping("/messageId")
+    ResponseEntity<UserMessageDTO> getById(@RequestParam Long messageId){
         UserMessageDTO messageIds = userMessageService.getById(messageId);
         return new ResponseEntity<>(messageIds, HttpStatus.OK);
     }
 
-    @PutMapping("/updateMessage/{messageId}")
-    ResponseEntity<UserMessageDTO> updateMessage(@PathVariable Long messageId, @RequestBody UserMessageDTO messageDTO){
+    @PutMapping("/updateMessage")
+    ResponseEntity<UserMessageDTO> updateMessage(@RequestParam Long messageId, @RequestBody UserMessageDTO messageDTO){
         UserMessageDTO messageAndId = userMessageService.updateMessage(messageId, messageDTO);
         return new ResponseEntity<>(messageAndId, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deleteMessageId/{messageId}")
-    ResponseEntity<Void> deleteById(@PathVariable Long messageId){
-        userMessageService.deleteMessage(messageId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/createMessage/{userId}")

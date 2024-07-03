@@ -34,16 +34,10 @@ public class PropertyController {
         return new ResponseEntity<>(property, HttpStatus.CREATED);
     }
 
-    @GetMapping("/propertyId/{propertyId}")
-    ResponseEntity<PropertyDTO> getPropertyById(@PathVariable Long propertyId) {
+    @GetMapping("/propertyId")
+    ResponseEntity<PropertyDTO> getPropertyById(@RequestParam Long propertyId) {
         PropertyDTO propertyIds = propertyService.getPropertyById(propertyId);
         return new ResponseEntity<>(propertyIds, HttpStatus.OK);
-    }
-
-    @PutMapping("/updateProperty/{propertyId}")
-    ResponseEntity<PropertyDTO> updateProperty(@PathVariable Long propertyId, @RequestBody PropertyDTO propertyDTO) {
-        PropertyDTO propertyAndId = propertyService.updateProperty(propertyId, propertyDTO);
-        return new ResponseEntity<>(propertyAndId, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteProperty")
@@ -52,8 +46,8 @@ public class PropertyController {
        return new ResponseEntity<>(deleteProperty, HttpStatus.OK);
     }
 
-    @PostMapping("/createProperty/{ownerId}")
-    ResponseEntity<ResponseBody> createPropertiesByOwner(@PathVariable Long ownerId, @RequestBody List<PropertyDTO> propertyList) {
+    @PostMapping("/createProperty")
+    ResponseEntity<ResponseBody> createPropertiesByOwner(@RequestParam Long ownerId, @RequestBody List<PropertyDTO> propertyList) {
         ResponseBody createPropertyByOwner = propertyService.createPropertiesByOwner(ownerId, propertyList);
         return new ResponseEntity<>(createPropertyByOwner, HttpStatus.CREATED);
     }
