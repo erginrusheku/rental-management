@@ -31,8 +31,8 @@ public class OwnerMessageController {
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
-    @GetMapping("/messageId/{messageId}")
-    ResponseEntity<OwnerMessageDTO> getById(@PathVariable Long messageId){
+    @GetMapping("/messageId")
+    ResponseEntity<OwnerMessageDTO> getById(@RequestParam Long messageId){
         OwnerMessageDTO messageIds = messageService.getById(messageId);
         return new ResponseEntity<>(messageIds, HttpStatus.OK);
     }
@@ -43,14 +43,14 @@ public class OwnerMessageController {
         return new ResponseEntity<>(messageUpdated, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteMessageId/{messageId}")
-    ResponseEntity<Void> deleteById(@PathVariable Long messageId){
+    @DeleteMapping("/deleteMessageId")
+    ResponseEntity<Void> deleteById(@RequestParam Long messageId){
         messageService.deleteMessage(messageId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/createMessage/{ownerId}")
-    ResponseEntity<ResponseBody> createMessageByOwner(@PathVariable Long ownerId, @RequestBody List<OwnerMessageDTO> messageList){
+    @PostMapping("/createMessage")
+    ResponseEntity<ResponseBody> createMessageByOwner(@RequestParam Long ownerId, @RequestBody List<OwnerMessageDTO> messageList){
         ResponseBody createMessage = messageService.createMessageByOwner(ownerId, messageList);
         return new ResponseEntity<>(createMessage, HttpStatus.CREATED);
     }

@@ -30,8 +30,8 @@ public class BookingController {
         BookingDTO booking =  bookingService.createBooking(bookingDTO);
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
    }
-   @GetMapping("/bookingId/{bookingId}")
-   ResponseEntity<BookingDTO> getById(@PathVariable Long bookingId){
+   @GetMapping("/bookingId")
+   ResponseEntity<BookingDTO> getById(@RequestParam Long bookingId){
         BookingDTO bookingIds = bookingService.getById(bookingId);
         return new ResponseEntity<>(bookingIds, HttpStatus.OK);
    }

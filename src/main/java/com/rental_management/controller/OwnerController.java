@@ -19,8 +19,8 @@ public class OwnerController {
         this.ownerService = ownerService;
     }
 
-    @GetMapping("/ownerId/{ownerId}")
-    ResponseEntity<OwnerDTO> getOwnerById(@PathVariable Long ownerId){
+    @GetMapping("/owner")
+    ResponseEntity<OwnerDTO> getOwnerById(@RequestParam Long ownerId){
         OwnerDTO ownerIds = ownerService.getOwnerById(ownerId);
         return new ResponseEntity<>(ownerIds, HttpStatus.OK);
     }
@@ -37,8 +37,8 @@ public class OwnerController {
         return new ResponseEntity<>(createdOwner, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateOwnerId/{ownerId}")
-    ResponseEntity<ResponseBody> updateOwner(@PathVariable Long ownerId,@RequestBody OwnerDTO ownerDTO){
+    @PutMapping("/updateOwnerId")
+    ResponseEntity<ResponseBody> updateOwner(@RequestParam Long ownerId,@RequestBody OwnerDTO ownerDTO){
         ResponseBody updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }

@@ -20,8 +20,8 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @GetMapping("/cardId/{cardId}")
-    ResponseEntity<CardDTO> getCardById(@PathVariable Long cardId){
+    @GetMapping("/card}")
+    ResponseEntity<CardDTO> getCardById(@RequestParam Long cardId){
         CardDTO cardIds = cardService.getCardById(cardId);
         return new ResponseEntity<>(cardIds, HttpStatus.OK);
     }
@@ -38,26 +38,26 @@ public class CardController {
         return new ResponseEntity<>(createdCard, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateCard/{cardId}")
-    ResponseEntity<CardDTO> updateCard(@PathVariable Long cardId,@RequestBody CardDTO cardDTO){
+    @PutMapping("/updateCard")
+    ResponseEntity<CardDTO> updateCard(@RequestParam Long cardId,@RequestBody CardDTO cardDTO){
         CardDTO updatedCard = cardService.updateCard(cardId, cardDTO);
         return new ResponseEntity<>(updatedCard, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteCardId/{cardId}")
-    ResponseEntity<Void> deleteCard(@PathVariable Long cardId){
+    @DeleteMapping("/deleteCardId")
+    ResponseEntity<Void> deleteCard(@RequestParam Long cardId){
         cardService.deleteCardById(cardId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/createCard/{userId}")
-    public ResponseEntity<ResponseBody> createCardByUser(@PathVariable Long userId, @RequestBody List<CardDTO> cardDTOList) {
+    @PostMapping("/createCard")
+    public ResponseEntity<ResponseBody> createCardByUser(@RequestParam Long userId, @RequestBody List<CardDTO> cardDTOList) {
         ResponseBody createCard = cardService.createCardByUser(userId, cardDTOList);
         return new ResponseEntity<>(createCard, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateCard/{userId}/{cardId}")
-    public ResponseEntity<ResponseBody> updateCardByUser(@PathVariable Long userId, @PathVariable Long cardId, @RequestBody List<CardDTO> cardList){
+    @PutMapping("/updateCard")
+    public ResponseEntity<ResponseBody> updateCardByUser(@RequestParam Long userId, @RequestParam Long cardId, @RequestBody List<CardDTO> cardList){
         ResponseBody updateCard = cardService.updateCardByUser(userId,cardId,cardList);
         return new ResponseEntity<>(updateCard, HttpStatus.OK);
     }
