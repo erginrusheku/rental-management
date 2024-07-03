@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.CardDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.CardService;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.http.HttpStatus;
@@ -48,4 +49,23 @@ public class CardController {
         cardService.deleteCardById(cardId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/createCard/{userId}")
+    public ResponseEntity<ResponseBody> createCardByUser(@PathVariable Long userId, @RequestBody List<CardDTO> cardDTOList) {
+        ResponseBody createCard = cardService.createCardByUser(userId, cardDTOList);
+        return new ResponseEntity<>(createCard, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/updateCard/{userId}/{cardId}")
+    public ResponseEntity<ResponseBody> updateCardByUser(@PathVariable Long userId, @PathVariable Long cardId, @RequestBody List<CardDTO> cardList){
+        ResponseBody updateCard = cardService.updateCardByUser(userId,cardId,cardList);
+        return new ResponseEntity<>(updateCard, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteCard")
+    public ResponseEntity<ResponseBody> deleteCardByUser(@RequestParam Long userId, @RequestParam Long cardId){
+        ResponseBody deleteCard = cardService.deleteCardByUser(userId,cardId);
+        return new ResponseEntity<>(deleteCard, HttpStatus.OK);
+    }
 }
+

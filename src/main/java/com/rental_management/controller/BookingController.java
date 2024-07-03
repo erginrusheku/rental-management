@@ -1,11 +1,14 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.BookingDTO;
+import com.rental_management.dto.ResponseBody;
+import com.rental_management.entities.Booking;
 import com.rental_management.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Book;
 import java.util.List;
 
 @RestController
@@ -33,15 +36,29 @@ public class BookingController {
         return new ResponseEntity<>(bookingIds, HttpStatus.OK);
    }
 
-   @PutMapping("/updateBookings/{bookingId}")
-   ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO bookingDTO){
-        BookingDTO bookingAndId = bookingService.updateBooking(bookingId, bookingDTO);
-        return new ResponseEntity<>(bookingAndId,HttpStatus.OK);
+
+
+   @PostMapping("/createBooking")
+    public ResponseEntity<ResponseBody> createBookingByUserForProperty(@RequestParam Long userId,@RequestParam Long propertyId,@RequestBody List<BookingDTO> bookingList){
+        ResponseBody createBooking = bookingService.createBookingByUserForProperty(userId, propertyId, bookingList);
+        return new ResponseEntity<>(createBooking, HttpStatus.CREATED);
    }
 
-   @DeleteMapping("/deleteBookingId/{bookingId}")
-   ResponseEntity<Void> deleteById(@PathVariable Long bookingId){
-        bookingService.deleteById(bookingId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+   @GetMapping("/{userId}/{bookingId}")
+    ResponseEntity<Booking> findBookingByUserId(@PathVariable Long userId, @PathVariable Long bookingId){
+        Booking getBookingByUserId = bookingService.findBookingByUserId(userId, bookingId);
+        return new ResponseEntity<>(getBookingByUserId, HttpStatus.OK);
    }
+
+    @PutMapping("/updateBookings")
+    ResponseEntity<ResponseBody> updateBookingByUserForProperty(@RequestParam Long userId,@RequestParam Long propertyId,@RequestParam Long bookingId, @RequestBody List<BookingDTO> bookingDTO){
+        ResponseBody bookingAndId = bookingService.updateBookingByUserForProperty(userId, propertyId, bookingId, bookingDTO);
+        return new ResponseEntity<>(bookingAndId,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteBooking")
+    public ResponseEntity<ResponseBody> deleteBookings(@RequestParam Long userId,@RequestParam Long propertyId,@RequestParam Long bookingId){
+        ResponseBody deleteBooking = bookingService.deleteBookings(userId, propertyId, bookingId);
+        return new ResponseEntity<>(deleteBooking, HttpStatus.OK);
+    }
 }

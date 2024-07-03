@@ -7,9 +7,8 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-public class MessageDTO {
+public class OwnerMessageDTO {
 
     private String content;
-    private Timestamp timestamp;
 
 }

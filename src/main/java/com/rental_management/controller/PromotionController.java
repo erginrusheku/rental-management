@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.PromotionDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.PromotionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,9 @@ public class PromotionController {
         return new ResponseEntity<>(createdPromotions, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updatePromotion/{promotionId}")
-    ResponseEntity<PromotionDTO> updatePromotion(@PathVariable Long promotionId,@RequestBody PromotionDTO promotionDTO){
-        PromotionDTO updatedPromotion = promotionService.updatePromotion(promotionId, promotionDTO);
+    @PutMapping("/updatePromotion/{ownerId}/{propertyId}/{promotionId}")
+    ResponseEntity<ResponseBody> updatePromotion(@PathVariable Long ownerId,@PathVariable Long propertyId,@PathVariable Long promotionId,@RequestBody PromotionDTO promotionDTO){
+        ResponseBody updatedPromotion = promotionService.updatePromotionByOwnerForProperties(ownerId, propertyId, promotionId, promotionDTO);
         return new ResponseEntity<>(updatedPromotion, HttpStatus.OK);
     }
 
@@ -46,5 +47,17 @@ public class PromotionController {
     ResponseEntity<Void> deletePromotion(@PathVariable Long promotionId){
         promotionService.deletePromotionById(promotionId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/createPromotion/{ownerId}/{propertyId}")
+    ResponseEntity<ResponseBody> createPromotionByOwnerForProperties(@PathVariable Long ownerId, @PathVariable Long propertyId, @RequestBody PromotionDTO promotionDTO){
+        ResponseBody createPromotion = promotionService.createPromotionByOwnerForProperties(ownerId,propertyId,promotionDTO);
+        return new ResponseEntity<>(createPromotion,HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/deletePromotion")
+    ResponseEntity<ResponseBody> deletePromotion(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestParam Long promotionId){
+        ResponseBody deletePromotion = promotionService.deletePromotion(ownerId,propertyId,promotionId);
+        return new ResponseEntity<>(deletePromotion, HttpStatus.OK);
     }
 }

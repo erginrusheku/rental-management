@@ -9,11 +9,9 @@ import java.util.List;
 public class PropertyDTO {
     private String title;
     private String description;
-    private String type;
     private String location;
-    private double pricePerNight;
+    private double originalPrice;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
-    private int maximumOccupancy;
-    private List<String> amenities;
+    private int maxOccupancy;
 }

@@ -1,6 +1,8 @@
 package com.rental_management.controller;
 
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.UserDTO;
+import com.rental_management.entities.User;
 import com.rental_management.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,20 +33,32 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
-        UserDTO createdUser = userService.createUser(userDTO);
+    ResponseEntity<ResponseBody> createUser(@RequestBody UserDTO userDTO){
+        ResponseBody createdUser = userService.createUser(userDTO);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @PutMapping("/updateUser/{userId}")
-    ResponseEntity<UserDTO> updateUser(@PathVariable Long userId,@RequestBody UserDTO userDTO){
-        UserDTO updatedUser = userService.updateUser(userId, userDTO);
+    ResponseEntity<ResponseBody> updateUser(@PathVariable Long userId,@RequestBody UserDTO userDTO){
+        ResponseBody updatedUser = userService.updateUser(userId, userDTO);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteUserId/{userId}")
-    ResponseEntity<Void> deleteUser(@PathVariable Long userId){
-        userService.deleteUser(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/deleteUser")
+    ResponseEntity<ResponseBody> deleteUser(@RequestParam Long userId){
+       ResponseBody deleteUser =  userService.deleteUser(userId);
+        return new ResponseEntity<>(deleteUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/{cardId}")
+    ResponseEntity<User> getCardsByUserId(@PathVariable Long userId, @PathVariable Long cardId){
+        User findCards = userService.getCardsByUserId(userId, cardId);
+        return new ResponseEntity<>(findCards, HttpStatus.OK);
+    }
+
+    @GetMapping("/getReview/{userId}/{reviewId}")
+    ResponseEntity<User> getReviewByUserId(@PathVariable Long userId, @PathVariable Long reviewId){
+        User findCards = userService.getReviewByUserId(userId, reviewId);
+        return new ResponseEntity<>(findCards, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.rental_management.controller;
 
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.ReviewDTO;
 import com.rental_management.service.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -36,9 +37,9 @@ public class ReviewController {
         return new ResponseEntity<>(reviewIds, HttpStatus.OK);
     }
 
-    @PutMapping({"/updateReview/{reviewId}"})
-    ResponseEntity<ReviewDTO> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO){
-        ReviewDTO reviewAndId = reviewService.updateReview(reviewId,reviewDTO);
+    @PutMapping({"/updateReview"})
+    ResponseEntity<ResponseBody> updateReview(@RequestParam Long userId,@RequestParam Long propertyId,@RequestParam Long reviewId, @RequestBody List<ReviewDTO> reviewList){
+        ResponseBody reviewAndId = reviewService.updateReviewByUserForProperty(userId, propertyId, reviewId, reviewList);
         return new ResponseEntity<>(reviewAndId, HttpStatus.OK);
     }
 
@@ -46,5 +47,17 @@ public class ReviewController {
     ResponseEntity<Void> deleteById(@PathVariable Long reviewId){
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/createReview/{userId}/{propertyId}")
+    ResponseEntity<ResponseBody> createReviewByUserForProperty(@PathVariable Long userId, @PathVariable Long propertyId, @RequestBody List<ReviewDTO> reviewList){
+        ResponseBody createReview = reviewService.createReviewByUserForProperty(userId,propertyId,reviewList);
+        return new ResponseEntity<>(createReview, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/deleteReview")
+    ResponseEntity<ResponseBody> deleteReview(@RequestParam Long userId,@RequestParam Long propertyId, @RequestParam Long reviewId){
+        ResponseBody deleteReview = reviewService.deleteReview(userId,propertyId,reviewId);
+        return new ResponseEntity<>(deleteReview, HttpStatus.OK);
     }
 }

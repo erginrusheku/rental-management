@@ -1,6 +1,7 @@
 package com.rental_management.controller;
 
 import com.rental_management.dto.OwnerDTO;
+import com.rental_management.dto.ResponseBody;
 import com.rental_management.service.OwnerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,20 +32,20 @@ public class OwnerController {
     }
 
     @PostMapping("/create")
-    ResponseEntity<OwnerDTO> createOwner(@RequestBody OwnerDTO ownerDTO){
-        OwnerDTO createdOwner = ownerService.createOwner(ownerDTO);
+    ResponseEntity<ResponseBody> createOwner(@RequestBody OwnerDTO ownerDTO){
+        ResponseBody createdOwner = ownerService.createOwner(ownerDTO);
         return new ResponseEntity<>(createdOwner, HttpStatus.CREATED);
     }
 
     @PutMapping("/updateOwnerId/{ownerId}")
-    ResponseEntity<OwnerDTO> updateOwner(@PathVariable Long ownerId,@RequestBody OwnerDTO ownerDTO){
-        OwnerDTO updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
+    ResponseEntity<ResponseBody> updateOwner(@PathVariable Long ownerId,@RequestBody OwnerDTO ownerDTO){
+        ResponseBody updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteOwnerId/{ownerId}")
-    ResponseEntity<Void> deleteOwner(@PathVariable Long ownerId){
-        ownerService.deleteOwnerById(ownerId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/deleteOwner")
+    ResponseEntity<ResponseBody> deleteOwner(@RequestParam Long ownerId){
+        ResponseBody deleteOwner = ownerService.deleteOwnerById(ownerId);
+        return new ResponseEntity<>(deleteOwner,HttpStatus.OK);
     }
 }

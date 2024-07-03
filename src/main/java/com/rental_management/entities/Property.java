@@ -1,5 +1,6 @@
 package com.rental_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,25 +13,26 @@ public class Property {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "property_id")
     private Long propertyId;
     private String title;
     private String description;
-    private String type;
     private String location;
-    private double pricePerNight;
+    private double originalPrice;
+    private double promotionPrice;
     private int numberOfBedrooms;
     private int numberOfBathrooms;
-    private int maximumOccupancy;
-    private String amenities;
+    private int maxOccupancy;
 
-    @ManyToOne
+    @OneToOne(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Promotion promotion;
+    @JsonIgnore
     @ManyToOne
     private Owner owner;
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings;
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
-    @OneToOne(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Settings settings;
 }

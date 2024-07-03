@@ -11,6 +11,5 @@ import java.util.Date;
 public class ReviewDTO {
     private Rating rating;
     private String comment;
-    private Date date;
     private String message;
 }
