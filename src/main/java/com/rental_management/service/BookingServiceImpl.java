@@ -10,7 +10,6 @@ import com.rental_management.repo.PropertyRepository;
 import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -166,6 +165,7 @@ public class BookingServiceImpl implements BookingService {
                 }
 
                 Booking createdBooking = bookingRepository.save(booking);
+
                 SuccessDTO successDTO = new SuccessDTO();
                 successDTO.setSuccess(true);
                 successDTO.setMessage("The booking was created successfully with ID: " + createdBooking.getBookingId());
@@ -173,6 +173,7 @@ public class BookingServiceImpl implements BookingService {
                 return createdBooking;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
+
 
 
         optinalUser.setBookings(bookings);
@@ -260,11 +261,10 @@ public class BookingServiceImpl implements BookingService {
 
             modelMapper.map(bookingDTO, optionalBooking);
 
-            optionalBooking.setCheckInDate(optionalBooking.getCheckInDate());
+            optionalBooking.setCheckInDate(bookingDTO.getCheckInDate());
             LocalDate checkIn = optionalBooking.getCheckInDate();
             LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
             optionalBooking.setCheckOutDate(checkOut);
-
 
 
             if (optionalProperty.getPromotion() == null) {
@@ -307,25 +307,13 @@ public class BookingServiceImpl implements BookingService {
                     optionalBooking.setTotalPrice(total);
                 }
             }
-
-            if(optionalProperty.getPromotion() == null){
-
-                double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
-                optionalBooking.setTotalPrice(propertyPrice);}
-            else if(optionalBooking.getCheckOutDate().isAfter(optionalProperty.getPromotion().getEndDate())){
+            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), optionalBooking.getCheckInDate(),optionalBooking.getCheckOutDate())) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
-                errorDTO.setMessage("The Promotion day "+optionalProperty.getPromotion().getStartDate()+" until "
-                        + optionalProperty.getPromotion().getEndDate()+" is no longer available for this booking day: "+ optionalBooking.getCheckOutDate());
+                errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
                 errors.add(errorDTO);
-                responseBody.setError(errors);
                 return null;
-            } else {
-                double propertyPrice1 = optionalProperty.getPromotionPrice() * bookingDTO.getDay();
-                optionalBooking.setTotalPrice(propertyPrice1);
             }
-
-
 
             Booking updatedBooking = bookingRepository.save(optionalBooking);
             SuccessDTO successDTO = new SuccessDTO();
@@ -346,7 +334,6 @@ public class BookingServiceImpl implements BookingService {
 
         bookings.forEach(booking -> booking.setUser(savedUser));
         bookings.forEach(booking -> booking.setProperty(savedProperty));
-
         bookingRepository.saveAll(bookings);
 
         modelMapper.map(savedUser, UserDTO.class);
@@ -357,43 +344,5 @@ public class BookingServiceImpl implements BookingService {
 
         return responseBody;
 
-    }
-
-    @Override
-    @Transactional
-    public ResponseBody deleteBookings(List<Long> bookingIds) {
-        ResponseBody responseBody = new ResponseBody();
-        List<ErrorDTO> errors = new ArrayList<>();
-        List<SuccessDTO> successes = new ArrayList<>();
-
-        try {
-            List<Booking> bookingsToDelete = bookingRepository.findAllById(bookingIds);
-
-            if (bookingsToDelete.isEmpty()) {
-                ErrorDTO errorDTO = new ErrorDTO();
-                errorDTO.setErrors(true);
-                errorDTO.setMessage("No bookings found for the provided IDs");
-                errors.add(errorDTO);
-                responseBody.setError(errors);
-                return responseBody;
-            }
-
-            bookingRepository.deleteAll(bookingsToDelete);
-
-            SuccessDTO successDTO = new SuccessDTO();
-            successDTO.setSuccess(true);
-            successDTO.setMessage("Bookings deleted successfully");
-            successes.add(successDTO);
-            responseBody.setSuccess(successes);
-
-        } catch (Exception e) {
-            ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrors(true);
-            errorDTO.setMessage("An error occurred while deleting bookings: " + e.getMessage());
-            errors.add(errorDTO);
-            responseBody.setError(errors);
-        }
-
-        return responseBody;
     }
 }
