@@ -26,26 +26,14 @@ public class UserMessageController {
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
-    ResponseEntity<UserMessageDTO> createMessage(@RequestBody UserMessageDTO userMessageDTO){
-        UserMessageDTO message = userMessageService.createMessage(userMessageDTO);
-        return new ResponseEntity<>(message, HttpStatus.CREATED);
-    }
-
     @GetMapping("/messageId")
     ResponseEntity<UserMessageDTO> getById(@RequestParam Long messageId){
         UserMessageDTO messageIds = userMessageService.getById(messageId);
         return new ResponseEntity<>(messageIds, HttpStatus.OK);
     }
 
-    @PutMapping("/updateMessage")
-    ResponseEntity<UserMessageDTO> updateMessage(@RequestParam Long messageId, @RequestBody UserMessageDTO messageDTO){
-        UserMessageDTO messageAndId = userMessageService.updateMessage(messageId, messageDTO);
-        return new ResponseEntity<>(messageAndId, HttpStatus.OK);
-    }
-
-    @PostMapping("/createMessage/{userId}")
-    public ResponseEntity<ResponseBody> createMessageByUser(@PathVariable Long userId, @RequestBody List<UserMessageDTO> messages) {
+    @PostMapping("/createMessage")
+    public ResponseEntity<ResponseBody> createMessageByUser(@RequestParam Long userId, @RequestBody List<UserMessageDTO> messages) {
         ResponseBody userMessageDTO = userMessageService.createMessageByUser(userId, messages);
         return new ResponseEntity<>(userMessageDTO, HttpStatus.CREATED);
     }
