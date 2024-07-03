@@ -86,7 +86,7 @@ public class PropertyServiceImpl implements PropertyService {
                     } else {
                         Property property = modelMapper.map(propertyDto, Property.class);
                         property.setOwner(existingOwner);
-                        existingOwner.getProperties().add(property);
+                        existingOwner.getProperties().add(property); //
                         Property createdProperty = propertyRepository.save(property);
                         SuccessDTO success = new SuccessDTO();
                         success.setSuccess(true);
