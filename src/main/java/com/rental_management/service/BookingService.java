@@ -15,4 +15,5 @@ public interface BookingService {
     ResponseBody createBookingByUserForProperty(Long userId, Long propertyId, List<BookingDTO> bookingList);
     Booking findBookingByUserId(Long userId, Long bookingId);
     ResponseBody updateBookingByUserForProperty(Long userId, Long propertyId, Long bookingId, List<BookingDTO> bookingList);
+    ResponseBody deleteBookings(List<Long> bookingIds);
 }

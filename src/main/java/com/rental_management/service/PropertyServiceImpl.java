@@ -5,8 +5,10 @@ import com.rental_management.entities.Owner;
 import com.rental_management.entities.Property;
 import com.rental_management.repo.OwnerRepository;
 import com.rental_management.repo.PropertyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    @Transactional
     public ResponseBody createPropertiesByOwner(Long ownerId, List<PropertyDTO> propertyList) {
         ResponseBody responseBody = new ResponseBody();
         List<SuccessDTO> successes = new ArrayList<>();
@@ -82,6 +85,8 @@ public class PropertyServiceImpl implements PropertyService {
                         return null;
                     } else {
                         Property property = modelMapper.map(propertyDto, Property.class);
+                        property.setOwner(existingOwner);
+                        existingOwner.getProperties().add(property);
                         Property createdProperty = propertyRepository.save(property);
                         SuccessDTO success = new SuccessDTO();
                         success.setSuccess(true);
@@ -93,7 +98,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        existingOwner.setProperties(propertiesList);
+       /* existingOwner.setProperties(propertiesList);
         Owner savedOwner = ownerRepository.save(existingOwner);
 
 
@@ -101,10 +106,14 @@ public class PropertyServiceImpl implements PropertyService {
         propertiesList.forEach(property -> property.setOwner(savedOwner));
         propertyRepository.saveAll(propertiesList);
 
+*/
+        //existingOwner.setProperties(propertiesList); // Set properties on owner
+        ownerRepository.save(existingOwner);
+
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
-        modelMapper.map(savedOwner, OwnerDTO.class);
+        //modelMapper.map(savedOwner, OwnerDTO.class);
 
         return responseBody;
     }
@@ -172,6 +181,8 @@ public class PropertyServiceImpl implements PropertyService {
              }
 
              Property createProperty = propertyRepository.save(optionalProperty);
+                createProperty.setOwner(optionalOwner);
+               optionalOwner.getProperties().add(createProperty);
              SuccessDTO successDTO = new SuccessDTO();
              successDTO.setSuccess(true);
              successDTO.setMessage("Property was updated successfully");
@@ -181,14 +192,41 @@ public class PropertyServiceImpl implements PropertyService {
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        optionalOwner.setProperties(properties);
-        Owner savedOwner = ownerRepository.save(optionalOwner);
+        //optionalOwner.setProperties(properties);
+        ownerRepository.save(optionalOwner);
 
-        properties.forEach(property -> property.setOwner(savedOwner));
-        propertyRepository.saveAll(properties);
+        /*properties.forEach(property -> property.setOwner(savedOwner));
+        propertyRepository.saveAll(properties);*/
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
 
         return responseBody;
     }
 
+    @Override
+    @Transactional
+    public void deleteProperty(Long ownerId, Long propertyId) {
+        // Find the owner
+        Optional<Owner> ownerOptional = ownerRepository.findById(ownerId);
+        if (ownerOptional.isEmpty()) {
+            throw new EntityNotFoundException("Owner with id " + ownerId + " not found");
+        }
+        Owner owner = ownerOptional.get();
+
+        // Find the property by id
+        Property property = owner.getProperties().stream()
+                .filter(p -> p.getPropertyId().equals(propertyId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Property with id " + propertyId + " not found"));
+
+
+        // Remove property from owner's collection
+        owner.getProperties().remove(property);
+        property.setOwner(null); // Optional: Clear the owner reference from the property
+
+        // Delete the property
+        propertyRepository.delete(property);
+    }
 
 }
