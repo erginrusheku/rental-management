@@ -61,5 +61,11 @@ public class CardController {
         ResponseBody updateCard = cardService.updateCardByUser(userId,cardId,cardList);
         return new ResponseEntity<>(updateCard, HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteCard")
+    public ResponseEntity<ResponseBody> deleteCardByUser(@RequestParam Long userId, @RequestParam Long cardId){
+        ResponseBody deleteCard = cardService.deleteCardByUser(userId,cardId);
+        return new ResponseEntity<>(deleteCard, HttpStatus.OK);
+    }
 }
 

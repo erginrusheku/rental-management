@@ -95,6 +95,8 @@ public class CardServiceImpl implements CardService{
                         card.setExpirationDate(Date.from(instant));
 
                         Card createdCard = cardRepository.save(card);
+                        createdCard.setUser(user);
+                        user.getCards().add(createdCard);
 
                         String userName = user.getUserName();
                         card.setCardholderName(userName);
@@ -108,10 +110,10 @@ public class CardServiceImpl implements CardService{
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        user.setCards(createdCards);
-        User savedUser = userRepository.save(user);
+       // user.setCards(createdCards);
+         userRepository.save(user);
 
-        createdCards.forEach(card -> card.setUser(savedUser));
+        //createdCards.forEach(card -> card.setUser(savedUser));
         cardRepository.saveAll(createdCards);
 
         responseBody.setError(errors);
@@ -164,18 +166,21 @@ public class CardServiceImpl implements CardService{
                         return null;
                     }
 
-            Card card = modelMapper.map(cardDTO1, Card.class);
+            //Card card = modelMapper.map(cardDTO1, Card.class);
 
-                    card.setCreationDate(Date.from(Instant.now()));
+                    existingCard.setCreationDate(Date.from(Instant.now()));
 
-            LocalDate cardCreationDate = card.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate cardCreationDate = existingCard.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate cardExpirationDate = cardCreationDate.plusYears(3);
             Instant instant = cardExpirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-            card.setExpirationDate(Date.from(instant));
+            existingCard.setExpirationDate(Date.from(instant));
 
             modelMapper.map(cardDTO1,existingCard);
 
             Card savedCard = cardRepository.save(existingCard);
+            savedCard.setUser(optionalUser);
+            optionalUser.getCards().add(savedCard);
+
 
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
@@ -187,10 +192,10 @@ public class CardServiceImpl implements CardService{
         }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        existingCard.setUser(optionalUser);
+        //existingCard.setUser(optionalUser);
 
-        User savedUser = userRepository.save(optionalUser);
-        cards.forEach(card -> card.setUser(savedUser));
+         userRepository.save(optionalUser);
+        //cards.forEach(card -> card.setUser(savedUser));
         cardRepository.saveAll(cards);
 
 
@@ -199,5 +204,49 @@ public class CardServiceImpl implements CardService{
 
       return responseBody;
 
+    }
+
+    @Override
+    public ResponseBody deleteCardByUser(Long userId, Long cardId) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+        User existingUser = optionalUser.get();
+
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
+        if (optionalCard.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Card with id: " + cardId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+        }
+
+        Card existingCard = optionalCard.get();
+
+        existingUser.getCards().remove(existingCard);
+
+        cardRepository.deleteById(existingCard.getCardId());
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Card was deleted successfully");
+        successes.add(successDTO);
+
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
+
+     return responseBody;
     }
 }
