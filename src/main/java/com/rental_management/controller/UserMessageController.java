@@ -27,7 +27,7 @@ public class UserMessageController {
     }
 
     @GetMapping("/messageId")
-    ResponseEntity<UserMessageDTO> getById( @RequestParam Long messageId ){
+    ResponseEntity<UserMessageDTO> getById(@RequestParam Long messageId){
         UserMessageDTO messageIds = userMessageService.getById(messageId);
         return new ResponseEntity<>(messageIds, HttpStatus.OK);
     }
