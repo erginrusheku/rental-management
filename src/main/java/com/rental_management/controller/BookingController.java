@@ -65,4 +65,10 @@ public class BookingController {
          ResponseBody updateBooking = bookingService.updateBookingByUserForProperty(userId, propertyId, bookingId, bookingList);
          return new ResponseEntity<>(updateBooking, HttpStatus.OK);
     }
+
+    @DeleteMapping
+    public ResponseEntity<ResponseBody> deleteBookings(@RequestBody List<Long> bookingIds){
+        ResponseBody deleteBooking = bookingService.deleteBookings(bookingIds);
+        return new ResponseEntity<>(deleteBooking, HttpStatus.OK);
+    };
 }
