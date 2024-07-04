@@ -177,7 +177,7 @@ public class MessageServiceImpl implements MessageService{
 
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
-            successDTO.setMessage("Message created successfully");
+            successDTO.setMessage("Message updated successfully");
             successes.add(successDTO);
             responseBody.setSuccess(successes);
             return createMessage;
@@ -191,6 +191,67 @@ public class MessageServiceImpl implements MessageService{
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
+        return responseBody;
+    }
+
+    @Override
+    public ResponseBody deleteMessage(Long userId, Long ownerId, Long messageId){
+
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
+        if(optionalOwner.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Owner id not found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+
+        }
+        Owner existingOwner = optionalOwner.get();
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        User optionalUser = existingUser.get();
+
+        Optional<Message> existingMessage = messageRepository.findById(messageId);
+        if(existingMessage.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Message with id: " + messageId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        Message optionalMessage = existingMessage.get();
+
+        existingOwner.getOwnerMessage().remove(optionalMessage);
+        optionalUser.getUserMessage().remove(optionalMessage);
+
+        messageRepository.delete(optionalMessage);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setMessage("Message was deleted successfully");
+        successDTO.setSuccess(true);
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
+
         return responseBody;
     }
 }

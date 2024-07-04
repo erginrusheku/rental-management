@@ -30,4 +30,10 @@ public class MessageController {
         ResponseBody updateMessage = messageService.updateMessage(ownerId, userId, messageId, messageList);
         return new ResponseEntity<>(updateMessage, HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteMessage")
+   ResponseEntity<ResponseBody> deleteMessage(@RequestParam Long userId, @RequestParam Long ownerId, @RequestParam Long messageId){
+        ResponseBody deleteMessage = messageService.deleteMessage(userId,ownerId,messageId);
+        return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
+    }
 }
