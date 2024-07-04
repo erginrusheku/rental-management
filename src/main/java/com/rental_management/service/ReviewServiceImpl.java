@@ -34,19 +34,10 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public ReviewDTO createReview(ReviewDTO reviewDTO) {
-        return null;
-    }
-
-    @Override
     public ReviewDTO getById(Long reviewId) {
         return null;
     }
 
-    @Override
-    public void deleteReview(Long reviewId) {
-
-    }
     @Override
     public ResponseBody createReviewByUserForProperty(Long userId, Long propertyId, List<ReviewDTO> reviewList){
         ResponseBody responseBody = new ResponseBody();

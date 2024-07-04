@@ -48,10 +48,6 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
     }
 
     @Override
-    public void deleteMessage(Long messageId) {
-
-    }
-    @Override
     public ResponseBody createMessageByOwner(Long ownerId, List<OwnerMessageDTO> messageList){
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errorList = new ArrayList<>();
@@ -96,13 +92,9 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        //optionalOwner.setMessageList(messages);
-         ownerRepository.save(optionalOwner);
+        ownerRepository.save(optionalOwner);
 
-        //messages.forEach(message -> message.setOwner(saveOwner));
         messageRepository.saveAll(messages);
-
-       //modelMapper.map(saveOwner, OwnerDTO.class);
 
         return responseBody;
     }
@@ -168,11 +160,9 @@ public class OwnerMessageServiceImpl implements OwnerMessageService {
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        //optionalOwner.setMessageList(messages);
-         ownerRepository.save(optionalOwner);
+        ownerRepository.save(optionalOwner);
 
-        //messages.forEach(message -> message.setOwner(savedOwner));
-         messageRepository.saveAll(messages);
+        messageRepository.saveAll(messages);
 
         return responseBody;
     }

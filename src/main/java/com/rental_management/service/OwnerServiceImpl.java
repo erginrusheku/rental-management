@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Service
 public class OwnerServiceImpl implements OwnerService{
 
-
     private final OwnerRepository ownerRepository;
 
     private final ModelMapper modelMapper;

@@ -13,9 +13,6 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "card", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "cardNumber")
-})
 public class Card {
 
     @Id

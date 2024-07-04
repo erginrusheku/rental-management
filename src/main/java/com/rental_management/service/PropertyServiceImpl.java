@@ -41,22 +41,6 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public PropertyDTO createProperty(PropertyDTO propertyDTO) {
-
-        return null;
-    }
-
-    @Override
-    public PropertyDTO updateProperty(Long propertyId, PropertyDTO propertyDTO) {
-        return null;
-    }
-
-    @Override
-    public void deletePropertyById(Long id) {
-
-    }
-
-    @Override
     @Transactional
     public ResponseBody createPropertiesByOwner(Long ownerId, List<PropertyDTO> propertyList) {
         ResponseBody responseBody = new ResponseBody();
@@ -98,22 +82,13 @@ public class PropertyServiceImpl implements PropertyService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-       /* existingOwner.setProperties(propertiesList);
-        Owner savedOwner = ownerRepository.save(existingOwner);
-
-
-
-        propertiesList.forEach(property -> property.setOwner(savedOwner));
-        propertyRepository.saveAll(propertiesList);
-
-*/
-        //existingOwner.setProperties(propertiesList); // Set properties on owner
         ownerRepository.save(existingOwner);
+
+        propertyRepository.saveAll(propertiesList);
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
-        //modelMapper.map(savedOwner, OwnerDTO.class);
 
         return responseBody;
     }
@@ -192,10 +167,8 @@ public class PropertyServiceImpl implements PropertyService {
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        //optionalOwner.setProperties(properties);
         ownerRepository.save(optionalOwner);
 
-        //properties.forEach(property -> property.setOwner(savedOwner));
         propertyRepository.saveAll(properties);
 
         responseBody.setError(errors);

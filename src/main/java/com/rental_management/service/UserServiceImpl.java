@@ -52,8 +52,6 @@ public class UserServiceImpl implements UserService{
             responseBody.setError(errors);
         }
 
-
-
         User user = modelMapper.map(userDTO, User.class);
 
         if(userRepository.existsByPersonalNumber(user.getPersonalNumber()) || userRepository.existsByEmail(user.getEmail())){
@@ -79,7 +77,6 @@ public class UserServiceImpl implements UserService{
 
         return responseBody;
     }
-
 
     @Override
     public ResponseBody updateUser(Long userId, UserDTO userDTO) {

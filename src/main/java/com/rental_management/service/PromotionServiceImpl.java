@@ -46,11 +46,6 @@ public class PromotionServiceImpl implements PromotionService{
     }
 
     @Override
-    public PromotionDTO createPromotion(PromotionDTO promotionDTO) {
-        return null;
-    }
-
-    @Override
     public ResponseBody updatePromotionByOwnerForProperties(Long ownerId, Long propertyId, Long promotionId, PromotionDTO promotionDTO) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
@@ -128,13 +123,7 @@ public class PromotionServiceImpl implements PromotionService{
         successes.add(success);
         responseBody.setSuccess(successes);
 
-
         return responseBody;
-    }
-
-    @Override
-    public void deletePromotionById(Long id) {
-
     }
 
     @Override

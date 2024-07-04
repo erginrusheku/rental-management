@@ -2,17 +2,14 @@ package com.rental_management.service;
 
 import com.rental_management.dto.*;
 import com.rental_management.entities.Card;
-import com.rental_management.entities.Owner;
 import com.rental_management.entities.User;
 import com.rental_management.repo.CardRepository;
 import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,21 +35,6 @@ public class CardServiceImpl implements CardService{
     @Override
     public List<CardDTO> getAllCards() {
         return null;
-    }
-
-    @Override
-    public CardDTO createCard(CardDTO cardDTO) {
-        return null;
-    }
-
-    @Override
-    public CardDTO updateCard(Long cardId, CardDTO cardDTO) {
-        return null;
-    }
-
-    @Override
-    public void deleteCardById(Long id) {
-        cardRepository.deleteById(id);
     }
 
     @Override
@@ -110,10 +92,8 @@ public class CardServiceImpl implements CardService{
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-       // user.setCards(createdCards);
-         userRepository.save(user);
+        userRepository.save(user);
 
-        //createdCards.forEach(card -> card.setUser(savedUser));
         cardRepository.saveAll(createdCards);
 
         responseBody.setError(errors);
@@ -166,8 +146,6 @@ public class CardServiceImpl implements CardService{
                         return null;
                     }
 
-            //Card card = modelMapper.map(cardDTO1, Card.class);
-
                     existingCard.setCreationDate(Date.from(Instant.now()));
 
             LocalDate cardCreationDate = existingCard.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -192,10 +170,8 @@ public class CardServiceImpl implements CardService{
         }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        //existingCard.setUser(optionalUser);
 
-         userRepository.save(optionalUser);
-        //cards.forEach(card -> card.setUser(savedUser));
+        userRepository.save(optionalUser);
         cardRepository.saveAll(cards);
 
 

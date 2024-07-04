@@ -34,26 +34,6 @@ public class UserMessageServiceImpl implements UserMessageService{
     }
 
     @Override
-    public UserMessageDTO createMessage(UserMessageDTO userMessageDTO) {
-        return null;
-    }
-
-    @Override
-    public UserMessageDTO getById(Long messageId) {
-        return null;
-    }
-
-    @Override
-    public UserMessageDTO updateMessage(Long messageId, UserMessageDTO messageDTO) {
-        return null;
-    }
-
-    @Override
-    public void deleteMessage(Long messageId) {
-
-    }
-
-    @Override
     public ResponseBody createMessageByUser(Long userId, List<UserMessageDTO> messages) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
@@ -100,13 +80,9 @@ public class UserMessageServiceImpl implements UserMessageService{
                 }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-       // optionalUser.setMessageList(messageList);
         userRepository.save(optionalUser);
 
-        //messageList.forEach(message -> message.setUser(savedUser));
         userMessageRepository.saveAll(messageList);
-
-        //modelMapper.map(savedUser, UserDTO.class);
 
         return responseBody;
     }
@@ -170,10 +146,8 @@ public class UserMessageServiceImpl implements UserMessageService{
 
         ).filter(Objects::nonNull).collect(Collectors.toList());
 
-        //optionalUser.setMessageList(userMessageList);
         userRepository.save(optionalUser);
 
-        //userMessageList.forEach(userMessage -> userMessage.setUser(savedUser));
         userMessageRepository.saveAll(userMessageList);
 
         return responseBody;
@@ -211,6 +185,14 @@ public class UserMessageServiceImpl implements UserMessageService{
         optionalUser.getMessageList().remove(optionalMessage);
 
         userMessageRepository.delete(optionalMessage);
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("Message was deleted successfully");
+        successes.add(successDTO);
+
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
 
         return responseBody;
 

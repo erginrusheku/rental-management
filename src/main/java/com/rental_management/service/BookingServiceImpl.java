@@ -8,14 +8,10 @@ import com.rental_management.entities.User;
 import com.rental_management.repo.BookingRepository;
 import com.rental_management.repo.PropertyRepository;
 import com.rental_management.repo.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,8 +47,6 @@ public class BookingServiceImpl implements BookingService {
     public BookingDTO getById(Long bookingId) {
         return null;
     }
-
-
 
     @Override
     @Transactional
@@ -116,14 +110,12 @@ public class BookingServiceImpl implements BookingService {
                 } else {
                     double total = 0.0;
 
-                    // Days before the promotion starts
                     if (checkInDate.isBefore(promotionStartDate)) {
                         LocalDate endBeforePromotion = promotionStartDate.minusDays(1);
                         long daysBeforePromotion = Math.min(bookingDTO.getDay(), ChronoUnit.DAYS.between(checkInDate, endBeforePromotion.plusDays(1)));
                         total += optionalProperty.getOriginalPrice() * daysBeforePromotion;
                     }
 
-                    // Days during the promotion period
                     LocalDate startDuringPromotion = checkInDate.isAfter(promotionStartDate) ? checkInDate : promotionStartDate;
                     LocalDate endDuringPromotion = checkOutDate.isBefore(promotionEndDate) ? checkOutDate : promotionEndDate;
                     if (!startDuringPromotion.isAfter(endDuringPromotion)) {
@@ -131,7 +123,6 @@ public class BookingServiceImpl implements BookingService {
                         total += optionalProperty.getPromotionPrice() * daysDuringPromotion;
                     }
 
-                    // Days after the promotion ends
                     if (checkOutDate.isAfter(promotionEndDate)) {
                         LocalDate startAfterPromotion = promotionEndDate.plusDays(1);
                         long daysAfterPromotion = ChronoUnit.DAYS.between(startAfterPromotion, checkOutDate.minusDays(0));
@@ -159,11 +150,8 @@ public class BookingServiceImpl implements BookingService {
                     return null;
                 }
 
-                Booking booking1 = modelMapper.map(bookingDTO, Booking.class);
-                /*booking1.setProperty(optionalProperty);
-                optionalProperty.getBookings().add(booking1);
-                booking1.setUser(optinalUser);
-                optinalUser.getBookings().add(booking1);*/
+                modelMapper.map(bookingDTO, Booking.class);
+
                 Booking createdBooking = bookingRepository.save(booking);
                 createdBooking.setProperty(optionalProperty);
                 optionalProperty.getBookings().add(createdBooking);
@@ -177,34 +165,24 @@ public class BookingServiceImpl implements BookingService {
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
+        userRepository.save(optinalUser);
 
+        propertyRepository.save(optionalProperty);
 
-        //optinalUser.setBookings(bookings);
-       userRepository.save(optinalUser);
-
-        //optionalProperty.setBookings(bookings);
-         propertyRepository.save(optionalProperty);
-
-       // bookings.forEach(booking -> booking.setUser(savedUser));
-       // bookings.forEach(booking -> booking.setProperty(savedProperty));
         bookingRepository.saveAll(bookings);
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
-
-
         return responseBody;
 
     }
-
     @Override
     public Booking findBookingByUserId(Long userId, Long bookingId) {
 
         return bookingRepository.findBookingByUserId(userId, bookingId);
 
     }
-
     @Override
     @Transactional
     public ResponseBody updateBookingByUserForProperty(Long userId, Long propertyId, Long bookingId, List<BookingDTO> bookingList) {
@@ -285,14 +263,12 @@ public class BookingServiceImpl implements BookingService {
                 } else {
                     double total = 0.0;
 
-                    // Days before the promotion starts
                     if (checkInDate.isBefore(promotionStartDate)) {
                         LocalDate endBeforePromotion = promotionStartDate.minusDays(1);
                         long daysBeforePromotion = Math.min(bookingDTO.getDay(), ChronoUnit.DAYS.between(checkInDate, endBeforePromotion.plusDays(1)));
                         total += optionalProperty.getOriginalPrice() * daysBeforePromotion;
                     }
 
-                    // Days during the promotion period
                     LocalDate startDuringPromotion = checkInDate.isAfter(promotionStartDate) ? checkInDate : promotionStartDate;
                     LocalDate endDuringPromotion = checkOutDate.isBefore(promotionEndDate) ? checkOutDate : promotionEndDate;
                     if (!startDuringPromotion.isAfter(endDuringPromotion)) {
@@ -300,7 +276,6 @@ public class BookingServiceImpl implements BookingService {
                         total += optionalProperty.getPromotionPrice() * daysDuringPromotion;
                     }
 
-                    // Days after the promotion ends
                     if (checkOutDate.isAfter(promotionEndDate)) {
                         LocalDate startAfterPromotion = promotionEndDate.plusDays(1);
                         long daysAfterPromotion = ChronoUnit.DAYS.between(startAfterPromotion, checkOutDate.minusDays(0));
@@ -335,16 +310,12 @@ public class BookingServiceImpl implements BookingService {
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-        //optionalUser.setBookings(bookings);
+
         userRepository.save(optionalUser);
 
-        //optionalProperty.setBookings(bookings);
         propertyRepository.save(optionalProperty);
 
-        /*bookings.forEach(booking -> booking.setUser(savedUser));
-        bookings.forEach(booking -> booking.setProperty(savedProperty));*/
         bookingRepository.saveAll(bookings);
-
 
 
         responseBody.setError(errors);
@@ -353,7 +324,6 @@ public class BookingServiceImpl implements BookingService {
         return responseBody;
 
     }
-
     @Override
     public ResponseBody deleteBookings(Long userId, Long propertyId, Long bookingId) {
         ResponseBody responseBody = new ResponseBody();

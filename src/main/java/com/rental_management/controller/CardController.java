@@ -19,7 +19,7 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @GetMapping("/card}")
+    @GetMapping("/card")
     ResponseEntity<CardDTO> getCardById(@RequestParam Long cardId){
         CardDTO cardIds = cardService.getCardById(cardId);
         return new ResponseEntity<>(cardIds, HttpStatus.OK);

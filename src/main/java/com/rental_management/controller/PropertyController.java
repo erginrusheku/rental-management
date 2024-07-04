@@ -1,10 +1,8 @@
 package com.rental_management.controller;
 
-import com.rental_management.dto.OwnerProperty;
 import com.rental_management.dto.PropertyDTO;
 import com.rental_management.dto.ResponseBody;
 import com.rental_management.entities.Property;
-import com.rental_management.repo.PropertyRepository;
 import com.rental_management.service.PropertyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
