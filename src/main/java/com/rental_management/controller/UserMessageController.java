@@ -23,11 +23,6 @@ public class UserMessageController {
         List<UserMessageDTO> messageList = userMessageService.getAllMessages();
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
-    @GetMapping("/messageId")
-    ResponseEntity<UserMessageDTO> getById(@RequestParam Long messageId){
-        UserMessageDTO messageIds = userMessageService.getById(messageId);
-        return new ResponseEntity<>(messageIds, HttpStatus.OK);
-    }
     @PostMapping("/createMessage")
     public ResponseEntity<ResponseBody> createMessageByUser(@RequestParam Long userId, @RequestBody List<UserMessageDTO> messages ) {
         ResponseBody userMessageDTO = userMessageService.createMessageByUser(userId, messages);
