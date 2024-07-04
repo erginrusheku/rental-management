@@ -13,7 +13,6 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.lang.runtime.ObjectMethods;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -107,6 +106,91 @@ public class MessageServiceImpl implements MessageService{
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
+        return responseBody;
+    }
+
+    @Override
+    public ResponseBody updateMessage(Long ownerId, Long userId, Long messageId, List<MessageDTO> messageList) {
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+
+        Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
+        if(optionalOwner.isEmpty()){
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Owner id not found");
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+
+        }
+        Owner existingOwner = optionalOwner.get();
+
+        Optional<User> existingUser = userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        User optionalUser = existingUser.get();
+
+        Optional<Message> existingMessage = messageRepository.findById(messageId);
+        if(existingMessage.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("Message with id: " + messageId + " not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return  responseBody;
+        }
+
+        Message optionalMessage = existingMessage.get();
+
+        List<Message> messages = messageList.stream().map(messageDTO -> {
+
+            modelMapper.map(messageDTO, optionalMessage);
+
+            Message createMessage = messageRepository.save(optionalMessage);
+
+            createMessage.setUserMessage(messageDTO.getUserMessage());
+            createMessage.setOwnerMessage(messageDTO.getOwnerMessage());
+
+            existingOwner.getOwnerMessage().add(createMessage);
+            optionalUser.getUserMessage().add(createMessage);
+
+            createMessage.setUser(optionalUser);
+            createMessage.setOwner(existingOwner);
+
+            if(createMessage.getMessageId() == null){
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("Id null");
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            }
+
+            SuccessDTO successDTO = new SuccessDTO();
+            successDTO.setSuccess(true);
+            successDTO.setMessage("Message created successfully");
+            successes.add(successDTO);
+            responseBody.setSuccess(successes);
+            return createMessage;
+
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        ownerRepository.save(existingOwner);
+        userRepository.save(optionalUser);
+
+        messageRepository.saveAll(messages);
+
+        responseBody.setError(errors);
+        responseBody.setSuccess(successes);
         return responseBody;
     }
 }

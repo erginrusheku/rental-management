@@ -25,5 +25,9 @@ public class MessageController {
         return new ResponseEntity<>(createMessage, HttpStatus.CREATED);
     }
 
-
+    @PutMapping("/updateMessage")
+    public ResponseEntity<ResponseBody> updateMessage(@RequestParam Long ownerId,@RequestParam Long userId,@RequestParam Long messageId,@RequestBody List<MessageDTO> messageList){
+        ResponseBody updateMessage = messageService.updateMessage(ownerId, userId, messageId, messageList);
+        return new ResponseEntity<>(updateMessage, HttpStatus.OK);
+    }
 }
