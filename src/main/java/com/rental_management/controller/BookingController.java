@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @RestController
@@ -35,8 +34,6 @@ public class BookingController {
         BookingDTO bookingIds = bookingService.getById(bookingId);
         return new ResponseEntity<>(bookingIds, HttpStatus.OK);
    }
-
-
 
    @PostMapping("/createBooking")
     public ResponseEntity<ResponseBody> createBookingByUserForProperty(@RequestParam Long userId,@RequestParam Long propertyId,@RequestBody List<BookingDTO> bookingList){

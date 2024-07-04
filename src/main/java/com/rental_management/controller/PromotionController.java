@@ -31,22 +31,10 @@ public class PromotionController {
         return new ResponseEntity<>(promotions, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
-    ResponseEntity<PromotionDTO> createPromotion(@RequestBody PromotionDTO promotionDTO){
-        PromotionDTO createdPromotions = promotionService.createPromotion(promotionDTO);
-        return new ResponseEntity<>(createdPromotions, HttpStatus.CREATED);
-    }
-
     @PutMapping("/updatePromotion")
     ResponseEntity<ResponseBody> updatePromotion(@RequestParam Long ownerId,@RequestParam Long propertyId,@RequestParam Long promotionId,@RequestBody PromotionDTO promotionDTO){
         ResponseBody updatedPromotion = promotionService.updatePromotionByOwnerForProperties(ownerId, propertyId, promotionId, promotionDTO);
         return new ResponseEntity<>(updatedPromotion, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deletePromotionId")
-    ResponseEntity<Void> deletePromotion(@RequestParam Long promotionId){
-        promotionService.deletePromotionById(promotionId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/createPromotion")

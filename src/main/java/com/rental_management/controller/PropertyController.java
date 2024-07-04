@@ -27,43 +27,31 @@ public class PropertyController {
         List<PropertyDTO> propertyList = propertyService.getAllProperties();
         return new ResponseEntity<>(propertyList, HttpStatus.OK);
     }
-
-    @PostMapping("/create")
-    ResponseEntity<PropertyDTO> createProperty(@RequestBody PropertyDTO propertyDTO) {
-        PropertyDTO property = propertyService.createProperty(propertyDTO);
-        return new ResponseEntity<>(property, HttpStatus.CREATED);
-    }
-
     @GetMapping("/propertyId")
     ResponseEntity<PropertyDTO> getPropertyById(@RequestParam Long propertyId) {
         PropertyDTO propertyIds = propertyService.getPropertyById(propertyId);
         return new ResponseEntity<>(propertyIds, HttpStatus.OK);
     }
-
     @DeleteMapping("/deleteProperty")
     public ResponseEntity<ResponseBody> deleteProperty(@RequestParam Long ownerId, @RequestParam Long propertyId) {
        ResponseBody deleteProperty = propertyService.deleteProperty(ownerId,propertyId);
        return new ResponseEntity<>(deleteProperty, HttpStatus.OK);
     }
-
     @PostMapping("/createProperty")
     ResponseEntity<ResponseBody> createPropertiesByOwner(@RequestParam Long ownerId, @RequestBody List<PropertyDTO> propertyList) {
         ResponseBody createPropertyByOwner = propertyService.createPropertiesByOwner(ownerId, propertyList);
         return new ResponseEntity<>(createPropertyByOwner, HttpStatus.CREATED);
     }
-
     @GetMapping("/{ownerId}/{propertyId}")
     ResponseEntity<Property> findPropertyByOwnerId(@PathVariable Long ownerId,@PathVariable Long propertyId){
         Property getPropertyFromOwnerId = propertyService.findPropertyByOwnerId(ownerId, propertyId);
         return new ResponseEntity<>(getPropertyFromOwnerId, HttpStatus.OK);
     }
-
     @GetMapping("/propertyPromotion/{propertyId}/{promotionId}")
     ResponseEntity<Property> findPropertyByPromotionId(@PathVariable Long propertyId,@PathVariable Long promotionId){
         Property getPropertyFromPromotionId = propertyService.findPromotionByPropertyId(propertyId, promotionId);
         return new ResponseEntity<>(getPropertyFromPromotionId, HttpStatus.OK);
     }
-
     @PutMapping("/updateProperty")
     public ResponseEntity<ResponseBody> updatePropertyByOwner(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestBody List<PropertyDTO> propertyList){
         ResponseBody updateProperty = propertyService.updatePropertyByOwner(ownerId,propertyId,propertyList);
