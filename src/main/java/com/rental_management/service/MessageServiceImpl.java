@@ -1,111 +1,112 @@
 package com.rental_management.service;
 
 import com.rental_management.dto.ErrorDTO;
+import com.rental_management.dto.MessageDTO;
 import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.SuccessDTO;
+import com.rental_management.entities.Message;
 import com.rental_management.entities.Owner;
-import com.rental_management.entities.OwnerMessage;
 import com.rental_management.entities.User;
-import com.rental_management.entities.UserMessage;
-import com.rental_management.repo.OwnerMessageRepository;
+import com.rental_management.repo.MessageRepository;
 import com.rental_management.repo.OwnerRepository;
-import com.rental_management.repo.UserMessageRepository;
 import com.rental_management.repo.UserRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.lang.runtime.ObjectMethods;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Service
 public class MessageServiceImpl implements MessageService{
 
-    private final UserMessageRepository userMessageRepository;
-    private final OwnerMessageRepository ownerMessageRepository;
+    private  final MessageRepository messageRepository;
     private final OwnerRepository ownerRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    public MessageServiceImpl(UserMessageRepository userMessageRepository, OwnerMessageRepository ownerMessageRepository, OwnerRepository ownerRepository, UserRepository userRepository) {
-        this.userMessageRepository = userMessageRepository;
-        this.ownerMessageRepository = ownerMessageRepository;
+    public MessageServiceImpl(MessageRepository messageRepository, OwnerRepository ownerRepository, UserRepository userRepository, ModelMapper modelMapper) {
+        this.messageRepository = messageRepository;
         this.ownerRepository = ownerRepository;
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public ResponseBody sendUserMessageToOwner(Long ownerId, Long userId, Long ownerMessageId, Long userMessageId, String userMessageContent) {
+    public ResponseBody createMessage(Long ownerId, Long userId, List<MessageDTO> messageList) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
-        if (optionalOwner.isEmpty()) {
+        if(optionalOwner.isEmpty()){
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
-            error.setMessage("Owner with id: " + ownerId + " not found!");
+            error.setMessage("Owner id not found");
             errors.add(error);
             responseBody.setError(errors);
             return responseBody;
+
         }
+
         Owner existingOwner = optionalOwner.get();
 
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            ErrorDTO error = new ErrorDTO();
-            error.setErrors(true);
-            error.setMessage("User with id: " + userId + " not found");
-            errors.add(error);
+        Optional<User> existingUser = userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setErrors(true);
+            errorDTO.setMessage("User with id: " + userId + " not found");
+            errors.add(errorDTO);
             responseBody.setError(errors);
-            return responseBody;
+            return  responseBody;
         }
-        User existingUser = optionalUser.get();
 
-        Optional<OwnerMessage> optionalOwnerMessage = ownerMessageRepository.findById(ownerMessageId);
-        if (optionalOwnerMessage.isEmpty()) {
-            ErrorDTO error = new ErrorDTO();
-            error.setErrors(true);
-            error.setMessage("Owner message with id: " + userId + " not found");
-            errors.add(error);
-            responseBody.setError(errors);
-            return responseBody;
-        }
-        OwnerMessage existingOwnerMessage = optionalOwnerMessage.get();
+        User optionalUser = existingUser.get();
 
-        Optional<UserMessage> optionalUserMessage = userMessageRepository.findById(userMessageId);
-        if (optionalUserMessage.isEmpty()) {
-            ErrorDTO error = new ErrorDTO();
-            error.setErrors(true);
-            error.setMessage("User message with id: " + userId + " not found");
-            errors.add(error);
-            responseBody.setError(errors);
-            return responseBody;
-        }
-        UserMessage existingUserMessage = optionalUserMessage.get();
+        List<Message> messages = messageList.stream().map(messageDTO -> {
 
-        existingUserMessage.setContent(userMessageContent);
-        existingUserMessage.setTimestamp(Timestamp.from(Instant.now()));
-        existingUserMessage.setUser(existingUser);
-        existingUserMessage.setReplyToOwnerMessage(existingOwnerMessage);
+            Message message = modelMapper.map(messageDTO,Message.class);
 
-        userMessageRepository.save(existingUserMessage);
-        SuccessDTO successDTO = new SuccessDTO();
-        successDTO.setSuccess(true);
-        successDTO.setMessage("Message sent successfully");
-        successes.add(successDTO);
-        responseBody.setSuccess(successes);
+            Message createMessage = messageRepository.save(message);
 
+            createMessage.setUserMessage(messageDTO.getUserMessage());
+            createMessage.setOwnerMessage(messageDTO.getOwnerMessage());
 
-        responseBody.setSuccess(successes);
+            existingOwner.getOwnerMessage().add(createMessage);
+            optionalUser.getUserMessage().add(createMessage);
+
+            createMessage.setUser(optionalUser);
+            createMessage.setOwner(existingOwner);
+
+            if(createMessage.getMessageId() == null){
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("Id null");
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            }
+
+            SuccessDTO successDTO = new SuccessDTO();
+            successDTO.setSuccess(true);
+            successDTO.setMessage("Message created successfully");
+            successes.add(successDTO);
+            responseBody.setSuccess(successes);
+            return createMessage;
+
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        ownerRepository.save(existingOwner);
+        userRepository.save(optionalUser);
+
+        messageRepository.saveAll(messages);
+
         responseBody.setError(errors);
+        responseBody.setSuccess(successes);
 
         return responseBody;
-    }
-
-    @Override
-    public List<UserMessage> getRepliesToOwnerMessage(Long ownerId) {
-        // Fetch the OwnerMessage
-        OwnerMessage ownerMessage = ownerMessageRepository.findById(ownerId).get();
-
-        return ownerMessage.getRepliesFromUsers();
     }
 }

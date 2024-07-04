@@ -4,21 +4,20 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
+@Entity
 @Getter
 @Setter
-@Entity
-public class UserMessage {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long messageId;
-    private String content;
-    private Timestamp timestamp;
+    private String userMessage;
+    private String ownerMessage;
+
+    @ManyToOne
+    private Owner owner;
+
     @ManyToOne
     private User user;
-    @ManyToOne
-    @JoinColumn(name = "owner_message_id")
-    private OwnerMessage replyToOwnerMessage;
 }
