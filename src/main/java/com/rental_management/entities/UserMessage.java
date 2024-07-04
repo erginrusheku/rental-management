@@ -18,4 +18,7 @@ public class UserMessage {
     private Timestamp timestamp;
     @ManyToOne
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "owner_message_id")
+    private OwnerMessage replyToOwnerMessage;
 }
