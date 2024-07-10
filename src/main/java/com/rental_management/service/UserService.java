@@ -7,7 +7,7 @@ import com.rental_management.entities.User;
 import java.util.List;
 
 public interface UserService {
-    UserDTO getUserById(Long id);
+    ResponseBody getUserById(Long id);
     List<UserDTO> getAllUsers();
     ResponseBody createUser(UserDTO userDTO);
     ResponseBody updateUser(Long userId, UserDTO userDTO);

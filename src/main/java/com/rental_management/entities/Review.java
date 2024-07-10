@@ -1,6 +1,5 @@
 package com.rental_management.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +18,10 @@ public class Review {
     private String comment;
     private Date date;
     private String message;
-    @JsonIgnore
+
     @ManyToOne
     private User user;
-    @JsonIgnore
+
     @ManyToOne
     private Property property;
 }

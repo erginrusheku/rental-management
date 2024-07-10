@@ -5,7 +5,10 @@ import com.rental_management.dto.OwnerDTO;
 import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.SuccessDTO;
 import com.rental_management.entities.Owner;
+import com.rental_management.repo.MessageRepository;
 import com.rental_management.repo.OwnerRepository;
+import com.rental_management.repo.PromotionRepository;
+import com.rental_management.repo.PropertyRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +21,18 @@ import java.util.stream.Collectors;
 public class OwnerServiceImpl implements OwnerService{
 
     private final OwnerRepository ownerRepository;
-
     private final ModelMapper modelMapper;
+    private final MessageRepository messageRepository;
+    private final PropertyRepository propertyRepository;
+    private final PromotionRepository promotionRepository;
 
-    public OwnerServiceImpl(OwnerRepository ownerRepository, ModelMapper modelMapper) {
+    public OwnerServiceImpl(OwnerRepository ownerRepository, ModelMapper modelMapper, MessageRepository messageRepository, PropertyRepository propertyRepository, PromotionRepository promotionRepository) {
 
         this.ownerRepository = ownerRepository;
         this.modelMapper = modelMapper;
+        this.messageRepository = messageRepository;
+        this.propertyRepository = propertyRepository;
+        this.promotionRepository = promotionRepository;
     }
 
     @Override
@@ -113,7 +121,9 @@ public class OwnerServiceImpl implements OwnerService{
         ResponseBody responseBody = new ResponseBody();
         List<SuccessDTO> successes = new ArrayList<>();
 
-
+        promotionRepository.deletePromotionByOwnerId(id);
+        propertyRepository.deletePropertyByOwnerId(id);
+        messageRepository.deleteMessageByOwnerId(id);
         ownerRepository.deleteById(id);
         SuccessDTO successDTO = new SuccessDTO();
         successDTO.setSuccess(true);

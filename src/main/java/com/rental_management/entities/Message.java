@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Message {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long messageId;

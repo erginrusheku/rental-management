@@ -19,16 +19,19 @@ public class BookingController {
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
+
     @GetMapping("/all")
     ResponseEntity <List<BookingDTO>> getAllBookings(){
         List<BookingDTO> bookingList = bookingService.getAllBookings();
         return new ResponseEntity<>(bookingList,HttpStatus.OK);
     }
+
    @PostMapping("/create")
    ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO){
         BookingDTO booking =  bookingService.createBooking(bookingDTO);
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
    }
+
    @GetMapping("/bookingId")
    ResponseEntity<BookingDTO> getById(@RequestParam Long bookingId){
         BookingDTO bookingIds = bookingService.getById(bookingId);
@@ -54,8 +57,8 @@ public class BookingController {
     }
 
     @DeleteMapping("/deleteBooking")
-    public ResponseEntity<ResponseBody> deleteBookings(@RequestParam Long userId,@RequestParam Long propertyId,@RequestParam Long bookingId){
-        ResponseBody deleteBooking = bookingService.deleteBookings(userId, propertyId, bookingId);
+    public ResponseEntity<ResponseBody> deleteBookings(/*@RequestParam Long userId,@RequestParam Long propertyId,*/@RequestParam Long bookingId){
+        ResponseBody deleteBooking = bookingService.deleteBookings( bookingId);
         return new ResponseEntity<>(deleteBooking, HttpStatus.OK);
     }
 }

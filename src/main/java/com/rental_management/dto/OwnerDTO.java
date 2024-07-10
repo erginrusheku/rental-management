@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OwnerDTO {
+
     private String name;
     private int phoneNumber;
+
 }

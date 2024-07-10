@@ -32,8 +32,8 @@ public class MessageController {
     }
 
     @DeleteMapping("/deleteMessage")
-   ResponseEntity<ResponseBody> deleteMessage(@RequestParam Long userId, @RequestParam Long ownerId, @RequestParam Long messageId){
-        ResponseBody deleteMessage = messageService.deleteMessage(userId,ownerId,messageId);
+   ResponseEntity<ResponseBody> deleteMessage( @RequestParam Long messageId){
+        ResponseBody deleteMessage = messageService.deleteMessage(messageId);
         return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
     }
 }

@@ -44,8 +44,8 @@ public class PromotionController {
     }
 
     @DeleteMapping("/deletePromotion")
-    ResponseEntity<ResponseBody> deletePromotion(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestParam Long promotionId){
-        ResponseBody deletePromotion = promotionService.deletePromotion(ownerId,propertyId,promotionId);
+    ResponseEntity<ResponseBody> deletePromotion(@RequestParam Long propertyId, @RequestParam Long promotionId){
+        ResponseBody deletePromotion = promotionService.deletePromotion(propertyId,promotionId);
         return new ResponseEntity<>(deletePromotion, HttpStatus.OK);
     }
 }

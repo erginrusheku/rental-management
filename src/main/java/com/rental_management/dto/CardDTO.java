@@ -11,4 +11,5 @@ public class CardDTO {
     private String cardNumber;
     private int cvv;
     private CardType cardType;
+
 }

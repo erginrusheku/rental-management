@@ -59,28 +59,24 @@ public class PropertyServiceImpl implements PropertyService {
 
         Owner existingOwner = existingOwnerOptional.get();
 
-        List<Property> propertiesList = propertyList.stream()
-                .map(propertyDto -> {
-                    if (propertyDto.getTitle() == null) {
-                        ErrorDTO errorDTO = new ErrorDTO();
-                        errorDTO.setErrors(true);
-                        errorDTO.setMessage("Property not created without title");
-                        errors.add(errorDTO);
-                        return null;
-                    } else {
-                        Property property = modelMapper.map(propertyDto, Property.class);
-                        property.setOwner(existingOwner);
-                        existingOwner.getProperties().add(property); //
-                        Property createdProperty = propertyRepository.save(property);
-                        SuccessDTO success = new SuccessDTO();
-                        success.setSuccess(true);
-                        success.setMessage("Property with Id: " + createdProperty.getPropertyId() + " successfully created!");
-                        successes.add(success);
-                        return createdProperty;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Property> propertiesList = propertyList.stream().map(propertyDto -> {
+            if (propertyDto.getTitle() == null) {
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("Property not created without title");
+                errors.add(errorDTO);
+                return null;
+            } else {
+                Property property = modelMapper.map(propertyDto, Property.class);
+                property.setOwner(existingOwner);
+                Property createdProperty = propertyRepository.save(property);
+                SuccessDTO success = new SuccessDTO();
+                success.setSuccess(true);
+                success.setMessage("Property with Id: " + createdProperty.getPropertyId() + " successfully created!");
+                successes.add(success);
+                return createdProperty;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
         ownerRepository.save(existingOwner);
 
@@ -111,10 +107,10 @@ public class PropertyServiceImpl implements PropertyService {
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
-        if(existingOwner.isEmpty()){
+        if (existingOwner.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
-            errorDTO.setMessage("Owner with id: "+ ownerId +" not found");
+            errorDTO.setMessage("Owner with id: " + ownerId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
             return responseBody;
@@ -123,10 +119,10 @@ public class PropertyServiceImpl implements PropertyService {
         Owner optionalOwner = existingOwner.get();
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
-        if(existingProperty.isEmpty()){
+        if (existingProperty.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
-            errorDTO.setMessage("Property with id: "+ propertyId +" not found");
+            errorDTO.setMessage("Property with id: " + propertyId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
             return responseBody;
@@ -135,7 +131,7 @@ public class PropertyServiceImpl implements PropertyService {
         Property optionalProperty = existingProperty.get();
 
         List<Property> properties = propertyList.stream().map(propertyDTO -> {
-            if(optionalProperty.getTitle() == null){
+            if (optionalProperty.getTitle() == null) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Property without title cannot created");
@@ -145,25 +141,26 @@ public class PropertyServiceImpl implements PropertyService {
             } else {
                 modelMapper.map(propertyDTO, optionalProperty);
 
-                if(optionalProperty.getPromotion() == null){
+                if (optionalProperty.getPromotion() == null) {
 
-                 optionalProperty.setOriginalPrice(propertyDTO.getOriginalPrice());
-             }else {
+                    optionalProperty.setOriginalPrice(propertyDTO.getOriginalPrice());
+                } else {
 
-             double discount = (propertyDTO.getOriginalPrice() * optionalProperty.getPromotion().getDiscountOffer()) / 100;
-             double price = propertyDTO.getOriginalPrice() - discount;
-             optionalProperty.setPromotionPrice(price);
-             }
+                    double discount = (propertyDTO.getOriginalPrice() * optionalProperty.getPromotion().getDiscountOffer()) / 100;
+                    double price = propertyDTO.getOriginalPrice() - discount;
+                    optionalProperty.setPromotionPrice(price);
+                }
 
-             Property createProperty = propertyRepository.save(optionalProperty);
+                Property createProperty = propertyRepository.save(optionalProperty);
+
                 createProperty.setOwner(optionalOwner);
-               optionalOwner.getProperties().add(createProperty);
-             SuccessDTO successDTO = new SuccessDTO();
-             successDTO.setSuccess(true);
-             successDTO.setMessage("Property was updated successfully");
-             successes.add(successDTO);
-             responseBody.setSuccess(successes);
-             return createProperty;
+
+                SuccessDTO successDTO = new SuccessDTO();
+                successDTO.setSuccess(true);
+                successDTO.setMessage("Property was updated successfully");
+                successes.add(successDTO);
+                responseBody.setSuccess(successes);
+                return createProperty;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
@@ -179,38 +176,23 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional
-    public ResponseBody deleteProperty(Long ownerId, Long propertyId) {
+    public ResponseBody deleteProperty(Long propertyId) {
 
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
-        Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
-        if(optionalOwner.isEmpty()){
-            ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrors(true);
-            errorDTO.setMessage("Owner with id: "+ ownerId +" not found");
-            errors.add(errorDTO);
-            responseBody.setError(errors);
-            return responseBody;
-        }
-        Owner existingOwner = optionalOwner.get();
-
-
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
-        if(optionalProperty.isEmpty()){
+        if (optionalProperty.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
-            errorDTO.setMessage("Property with id: "+ propertyId +" not found");
+            errorDTO.setMessage("Property with id: " + propertyId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
             return responseBody;
         }
 
         Property existingProperty = optionalProperty.get();
-
-
-        existingOwner.getProperties().remove(existingProperty);
 
         propertyRepository.delete(existingProperty);
         SuccessDTO successDTO = new SuccessDTO();

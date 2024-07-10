@@ -1,11 +1,9 @@
 package com.rental_management.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 @Getter
 @Setter
 @Entity
@@ -17,15 +15,4 @@ public class Owner {
 
     @Column(unique = true)
     private int phoneNumber;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Property> properties;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Promotion> promotions;
-
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Message> ownerMessage;
 }

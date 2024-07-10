@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PropertyDTO {
+
     private String title;
     private String description;
     private String location;
@@ -13,4 +14,5 @@ public class PropertyDTO {
     private int numberOfBedrooms;
     private int numberOfBathrooms;
     private int maxOccupancy;
+
 }

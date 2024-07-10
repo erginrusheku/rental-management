@@ -7,7 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReviewDTO {
+
     private Rating rating;
     private String comment;
     private String message;
+
 }

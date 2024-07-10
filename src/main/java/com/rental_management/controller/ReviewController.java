@@ -24,11 +24,13 @@ public class ReviewController {
         List<ReviewDTO> reviewList = reviewService.getAllReview();
         return new ResponseEntity<>(reviewList, HttpStatus.OK);
     }
-    @GetMapping("/reviewId/{reviewId}")
+
+    @GetMapping("/reviewId")
     ResponseEntity<ReviewDTO> getById(@RequestParam Long reviewId){
         ReviewDTO reviewIds = reviewService.getById(reviewId);
         return new ResponseEntity<>(reviewIds, HttpStatus.OK);
     }
+
     @PutMapping("/updateReview")
     ResponseEntity<ResponseBody> updateReview(@RequestParam Long userId,@RequestParam Long propertyId,@RequestParam Long reviewId, @RequestBody List<ReviewDTO> reviewList){
         ResponseBody reviewAndId = reviewService.updateReviewByUserForProperty(userId, propertyId, reviewId, reviewList);
@@ -40,9 +42,10 @@ public class ReviewController {
         ResponseBody createReview = reviewService.createReviewByUserForProperty(userId,propertyId,reviewList);
         return new ResponseEntity<>(createReview, HttpStatus.CREATED);
     }
+
     @DeleteMapping("/deleteReview")
-    ResponseEntity<ResponseBody> deleteReview(@RequestParam Long userId,@RequestParam Long propertyId, @RequestParam Long reviewId){
-        ResponseBody deleteReview = reviewService.deleteReview(userId,propertyId,reviewId);
+    ResponseEntity<ResponseBody> deleteReview(@RequestParam Long reviewId){
+        ResponseBody deleteReview = reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(deleteReview, HttpStatus.OK);
     }
 }

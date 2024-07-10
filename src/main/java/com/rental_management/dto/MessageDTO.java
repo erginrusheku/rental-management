@@ -9,4 +9,5 @@ public class MessageDTO {
 
     private String ownerMessage;
     private String userMessage;
+
 }

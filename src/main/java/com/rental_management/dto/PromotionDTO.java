@@ -12,4 +12,5 @@ public class PromotionDTO {
     private double discountOffer;
     private String offerDetails;
     private Long promotionDays;
+
 }

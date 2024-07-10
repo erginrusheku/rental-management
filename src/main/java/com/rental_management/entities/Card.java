@@ -1,6 +1,5 @@
 package com.rental_management.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.util.Date;
 @Setter
 @Entity
 public class Card {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cardId;
@@ -28,15 +26,11 @@ public class Card {
     @Min(value = 100, message = "CVV must be at least 100")
     @Max(value = 999, message = "CVV must be at most 999")
     private int cvv;
-
     @Enumerated(EnumType.STRING)
     private CardType cardType;
-
     private Date creationDate;
-
     private Date expirationDate;
 
-    @JsonIgnore
     @ManyToOne
     private User user;
 }

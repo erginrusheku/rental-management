@@ -154,7 +154,6 @@ public class BookingServiceImpl implements BookingService {
 
                 Booking createdBooking = bookingRepository.save(booking);
                 createdBooking.setProperty(optionalProperty);
-                optionalProperty.getBookings().add(createdBooking);
                 createdBooking.setUser(optinalUser);
 
                 SuccessDTO successDTO = new SuccessDTO();
@@ -296,9 +295,8 @@ public class BookingServiceImpl implements BookingService {
             modelMapper.map(bookingDTO, Booking.class);
             Booking updatedBooking = bookingRepository.save(optionalBooking);
             updatedBooking.setUser(optionalUser);
-            optionalUser.getBookings().add(updatedBooking);
+
             updatedBooking.setProperty(optionalProperty);
-            optionalProperty.getBookings().add(updatedBooking);
 
             SuccessDTO successDTO = new SuccessDTO();
             successDTO.setSuccess(true);
@@ -325,12 +323,12 @@ public class BookingServiceImpl implements BookingService {
 
     }
     @Override
-    public ResponseBody deleteBookings(Long userId, Long propertyId, Long bookingId) {
+    public ResponseBody deleteBookings(/*Long userId, Long propertyId,*/ Long bookingId) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
-        Optional<User> optionalUser = userRepository.findById(userId);
+        /*Optional<User> optionalUser = userRepository.findById(userId);
         if(optionalUser.isEmpty()){
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
@@ -350,7 +348,7 @@ public class BookingServiceImpl implements BookingService {
             responseBody.setError(errors);
             return responseBody;
             }
-        Property existingProperty = optionalProperty.get();
+        Property existingProperty = optionalProperty.get();*/
 
         Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
         if (optionalBooking.isEmpty()){
@@ -363,8 +361,6 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking existingBooking = optionalBooking.get();
 
-        existingUser.getBookings().remove(existingBooking);
-        existingProperty.getBookings().remove(existingBooking);
 
         bookingRepository.delete(existingBooking);
 

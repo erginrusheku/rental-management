@@ -114,7 +114,6 @@ public class PromotionServiceImpl implements PromotionService{
         promotionRepository.save(optionalPromotion);
         promotion.setOwner(optionalOwner);
         promotion.setProperty(optionalProperty);
-        optionalOwner.getPromotions().add(promotion);
         optionalProperty.setPromotion(promotion);
 
         SuccessDTO success = new SuccessDTO();
@@ -187,7 +186,6 @@ public class PromotionServiceImpl implements PromotionService{
         Promotion savedPromotion = promotionRepository.save(promotion);
         savedPromotion.setOwner(optionalOwner);
         savedPromotion.setProperty(optionalProperty);
-        optionalOwner.getPromotions().add(savedPromotion);
         optionalProperty.setPromotion(savedPromotion);
 
         modelMapper.map(savedPromotion, PromotionDTO.class);
@@ -202,22 +200,10 @@ public class PromotionServiceImpl implements PromotionService{
     }
 
     @Override
-    public ResponseBody deletePromotion(Long ownerId, Long propertyId, Long promotionId) {
+    public ResponseBody deletePromotion(Long propertyId, Long promotionId) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
-
-        Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
-        if(existingOwner.isEmpty()){
-            ErrorDTO error = new ErrorDTO();
-            error.setErrors(true);
-            error.setMessage("Owner not found with id: " + ownerId);
-            errors.add(error);
-            responseBody.setError(errors);
-            return responseBody;
-        }
-
-        Owner optionalOwner = existingOwner.get();
 
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
@@ -244,9 +230,9 @@ public class PromotionServiceImpl implements PromotionService{
         }
         Promotion existingPromotion = optionalPromotion.get();
 
-        optionalOwner.getPromotions().remove(existingPromotion);
-        optionalProperty.setPromotion(null);
 
+        optionalProperty.setPromotion(null);
+        optionalProperty.setPromotionPrice(0);
         promotionRepository.deleteById(existingPromotion.getId());
 
         SuccessDTO successDTO = new SuccessDTO();
@@ -254,7 +240,6 @@ public class PromotionServiceImpl implements PromotionService{
         successDTO.setMessage("Promotion was deleted successfully");
         successes.add(successDTO);
         responseBody.setSuccess(successes);
-
 
         responseBody.setError(errors);
         responseBody.setSuccess(successes);

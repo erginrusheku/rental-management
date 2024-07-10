@@ -9,4 +9,5 @@ public class ErrorDTO {
 
     private boolean errors;
     private String message;
+
 }

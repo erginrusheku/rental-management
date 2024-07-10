@@ -5,12 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 @Getter
 @Setter
 @Entity
 public class Property {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "property_id")
@@ -29,10 +27,4 @@ public class Property {
     @JsonIgnore
     @ManyToOne
     private Owner owner;
-    @JsonIgnore
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Booking> bookings;
-    @JsonIgnore
-    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews;
 }

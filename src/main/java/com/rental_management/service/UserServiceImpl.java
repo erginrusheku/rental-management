@@ -5,6 +5,9 @@ import com.rental_management.dto.ResponseBody;
 import com.rental_management.dto.SuccessDTO;
 import com.rental_management.dto.UserDTO;
 import com.rental_management.entities.User;
+import com.rental_management.repo.BookingRepository;
+import com.rental_management.repo.MessageRepository;
+import com.rental_management.repo.ReviewRepository;
 import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -18,16 +21,44 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final ReviewRepository reviewRepository;
+    private final MessageRepository messageRepository;
     private final ModelMapper modelMapper;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, BookingRepository bookingRepository, ReviewRepository reviewRepository, MessageRepository messageRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
+        this.reviewRepository = reviewRepository;
+        this.messageRepository = messageRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
-        return null;
+    public ResponseBody getUserById(Long id) {
+
+        ResponseBody responseBody = new ResponseBody();
+        List<ErrorDTO> errors = new ArrayList<>();
+        List<SuccessDTO> successes = new ArrayList<>();
+        Optional<User> existingUser = userRepository.findById(id);
+        if(existingUser.isEmpty()){
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setMessage("User not found");
+            errors.add(errorDTO);
+            responseBody.setError(errors);
+            return responseBody;
+        }
+        User user = existingUser.get();
+
+        userRepository.save(user);
+
+        SuccessDTO successDTO = new SuccessDTO();
+        successDTO.setSuccess(true);
+        successDTO.setMessage("User with id: " + user.getId() + " has been found successfully");
+        successes.add(successDTO);
+        responseBody.setSuccess(successes);
+
+        return responseBody;
     }
 
     @Override
@@ -123,6 +154,9 @@ public class UserServiceImpl implements UserService{
         ResponseBody responseBody = new ResponseBody();
         List<SuccessDTO> successes = new ArrayList<>();
 
+        reviewRepository.deleteReviewByUserId(id);
+        messageRepository.deleteMessageByUserId(id);
+        bookingRepository.deleteMessageByUserId(id);
         userRepository.deleteById(id);
 
         SuccessDTO successDTO = new SuccessDTO();
@@ -133,7 +167,6 @@ public class UserServiceImpl implements UserService{
 
         return responseBody;
     }
-
 
     @Override
     public User getCardsByUserId(Long userId, Long cardId) {

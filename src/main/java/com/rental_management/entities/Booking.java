@@ -1,6 +1,5 @@
 package com.rental_management.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,9 +20,10 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private Status status;
     private int peopleNumber;
+
     @ManyToOne
     private User user;
-    @JsonIgnore
+
     @ManyToOne
     private Property property;
 }

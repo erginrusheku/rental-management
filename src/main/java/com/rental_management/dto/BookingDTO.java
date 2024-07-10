@@ -14,4 +14,5 @@ public class BookingDTO {
     private Status status;
     private int day;
     private int peopleNumber;
+
 }
