@@ -24,7 +24,7 @@ public class Property {
 
     @OneToOne(mappedBy = "property", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Promotion promotion;
-    @JsonIgnore
+
     @ManyToOne
     private Owner owner;
 }
