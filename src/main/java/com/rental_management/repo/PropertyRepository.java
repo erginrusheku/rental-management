@@ -19,4 +19,5 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     Property findPromotionByPropertyId(@Param("propertyId") Long propertyId,@Param("promotionId") Long promotionId);
 
     void deletePropertyByOwnerId(Long ownerId);
+
 }

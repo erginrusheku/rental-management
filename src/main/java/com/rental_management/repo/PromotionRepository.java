@@ -10,4 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
     void deletePromotionByOwnerId(Long id);
+
 }

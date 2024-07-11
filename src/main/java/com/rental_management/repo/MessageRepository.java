@@ -6,6 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface MessageRepository extends JpaRepository<Message, Long> {
+
   void deleteMessageByOwnerId(Long messageOwnerId);
+
   void deleteMessageByUserId(Long messageUserId);
+
 }
+
+

@@ -13,24 +13,24 @@ import java.util.Date;
 @Setter
 @Entity
 public class Card {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cardId;
 
     private String cardholderName;
 
-    @Column(unique = true, length = 16)
-    @Pattern(regexp = "\\d{16}", message = "Card Number must be exactly 16 digits")
+    @Column(unique = true, length = 16) @Pattern(regexp = "\\d{16}", message = "Card Number must be exactly 16 digits")
     private String cardNumber;
 
-    @Min(value = 100, message = "CVV must be at least 100")
-    @Max(value = 999, message = "CVV must be at most 999")
+    @Min(value = 100, message = "CVV must be at least 100") @Max(value = 999, message = "CVV must be at most 999")
     private int cvv;
+
     @Enumerated(EnumType.STRING)
     private CardType cardType;
+
     private Date creationDate;
     private Date expirationDate;
 
     @ManyToOne
     private User user;
+
 }

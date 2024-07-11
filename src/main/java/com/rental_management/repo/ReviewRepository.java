@@ -10,4 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     void deleteReviewByUserId(Long id);
+
 }

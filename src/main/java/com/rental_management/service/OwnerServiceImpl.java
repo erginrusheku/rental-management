@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class OwnerServiceImpl implements OwnerService{
+public class OwnerServiceImpl implements OwnerService {
 
     private final OwnerRepository ownerRepository;
     private final ModelMapper modelMapper;
@@ -43,8 +43,7 @@ public class OwnerServiceImpl implements OwnerService{
     @Override
     public List<OwnerDTO> getAllOwners() {
         List<Owner> ownerList = ownerRepository.findAll();
-        return ownerList.stream().map(owners -> modelMapper.map(owners, OwnerDTO.class))
-                .collect(Collectors.toList());
+        return ownerList.stream().map(owners -> modelMapper.map(owners, OwnerDTO.class)).collect(Collectors.toList());
     }
 
     @Override
@@ -53,7 +52,7 @@ public class OwnerServiceImpl implements OwnerService{
         List<SuccessDTO> successes = new ArrayList<>();
         List<ErrorDTO> errors = new ArrayList<>();
 
-        if(ownerDTO.getName() == null || ownerDTO.getPhoneNumber() < 0 ){
+        if (ownerDTO.getName() == null || ownerDTO.getPhoneNumber() < 0) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Owner not created because the name or the phone number is missing");
@@ -92,10 +91,10 @@ public class OwnerServiceImpl implements OwnerService{
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
         Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
-        if(existingOwner.isEmpty()){
+        if (existingOwner.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
-            errorDTO.setMessage("Owner with id: "+ ownerId + " not found");
+            errorDTO.setMessage("Owner with id: " + ownerId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
             return responseBody;
@@ -103,13 +102,13 @@ public class OwnerServiceImpl implements OwnerService{
 
         Owner optionalOwner = existingOwner.get();
 
-        modelMapper.map(ownerDTO,optionalOwner);
+        modelMapper.map(ownerDTO, optionalOwner);
 
         ownerRepository.save(optionalOwner);
 
         SuccessDTO successDTO = new SuccessDTO();
         successDTO.setSuccess(true);
-        successDTO.setMessage("Owner with id: "+ optionalOwner.getId()+" updated successfully");
+        successDTO.setMessage("Owner with id: " + optionalOwner.getId() + " updated successfully");
         successes.add(successDTO);
         responseBody.setSuccess(successes);
 

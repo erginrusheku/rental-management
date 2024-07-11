@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService{
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
         Optional<User> existingUser = userRepository.findById(id);
-        if(existingUser.isEmpty()){
+        if (existingUser.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setMessage("User not found");
             errors.add(errorDTO);
@@ -64,8 +64,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserDTO> getAllUsers() {
         List<User> userList = userRepository.findAll();
-        return userList.stream().map(users -> modelMapper.map(users, UserDTO.class))
-                .collect(Collectors.toList());
+        return userList.stream().map(users -> modelMapper.map(users, UserDTO.class)).collect(Collectors.toList());
     }
 
     @Override
@@ -85,7 +84,7 @@ public class UserServiceImpl implements UserService{
 
         User user = modelMapper.map(userDTO, User.class);
 
-        if(userRepository.existsByPersonalNumber(user.getPersonalNumber()) || userRepository.existsByEmail(user.getEmail())){
+        if (userRepository.existsByPersonalNumber(user.getPersonalNumber()) || userRepository.existsByEmail(user.getEmail())) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User with the same personal number or email cannot be created");
@@ -125,7 +124,7 @@ public class UserServiceImpl implements UserService{
             return responseBody;
         }
 
-        if(!userRepository.existsByPersonalNumber(userDTO.getPersonalNumber())){
+        if (!userRepository.existsByPersonalNumber(userDTO.getPersonalNumber())) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("The personal number cannot be changed");

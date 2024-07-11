@@ -16,7 +16,7 @@ public class User {
     private Long id;
     private String userName;
     private String userLastname;
-    @Column(unique = true,length = 10)
+    @Column(unique = true, length = 10)
     private String personalNumber;
     private String email;
 

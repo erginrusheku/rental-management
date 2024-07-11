@@ -21,32 +21,32 @@ public class OwnerController {
     }
 
     @GetMapping("/owner")
-    ResponseEntity<OwnerDTO> getOwnerById(@RequestParam Long ownerId){
+    ResponseEntity<OwnerDTO> getOwnerById(@RequestParam Long ownerId) {
         OwnerDTO ownerIds = ownerService.getOwnerById(ownerId);
         return new ResponseEntity<>(ownerIds, HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<OwnerDTO>> getAllOwners(){
+    ResponseEntity<List<OwnerDTO>> getAllOwners() {
         List<OwnerDTO> owners = ownerService.getAllOwners();
         return new ResponseEntity<>(owners, HttpStatus.CREATED);
     }
 
     @PostMapping("/create")
-    ResponseEntity<ResponseBody> createOwner(@RequestBody OwnerDTO ownerDTO){
+    ResponseEntity<ResponseBody> createOwner(@RequestBody OwnerDTO ownerDTO) {
         ResponseBody createdOwner = ownerService.createOwner(ownerDTO);
         return new ResponseEntity<>(createdOwner, HttpStatus.CREATED);
     }
 
     @PutMapping("/updateOwnerId")
-    ResponseEntity<ResponseBody> updateOwner(@RequestParam Long ownerId,@RequestBody OwnerDTO ownerDTO){
+    ResponseEntity<ResponseBody> updateOwner(@RequestParam Long ownerId, @RequestBody OwnerDTO ownerDTO) {
         ResponseBody updatedOwner = ownerService.updateOwner(ownerId, ownerDTO);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteOwner")
-    ResponseEntity<ResponseBody> deleteOwner(@RequestParam Long ownerId){
+    ResponseEntity<ResponseBody> deleteOwner(@RequestParam Long ownerId) {
         ResponseBody deleteOwner = ownerService.deleteOwnerById(ownerId);
-        return new ResponseEntity<>(deleteOwner,HttpStatus.OK);
+        return new ResponseEntity<>(deleteOwner, HttpStatus.OK);
     }
 }

@@ -20,9 +20,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class MessageServiceImpl implements MessageService{
+public class MessageServiceImpl implements MessageService {
 
-    private  final MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
     private final OwnerRepository ownerRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
@@ -41,7 +41,7 @@ public class MessageServiceImpl implements MessageService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
-        if(optionalOwner.isEmpty()){
+        if (optionalOwner.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Owner id not found");
@@ -54,20 +54,20 @@ public class MessageServiceImpl implements MessageService{
         Owner existingOwner = optionalOwner.get();
 
         Optional<User> existingUser = userRepository.findById(userId);
-        if(existingUser.isEmpty()){
+        if (existingUser.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User with id: " + userId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
-            return  responseBody;
+            return responseBody;
         }
 
         User optionalUser = existingUser.get();
 
         List<Message> messages = messageList.stream().map(messageDTO -> {
 
-            Message message = modelMapper.map(messageDTO,Message.class);
+            Message message = modelMapper.map(messageDTO, Message.class);
 
             Message createMessage = messageRepository.save(message);
 
@@ -77,7 +77,7 @@ public class MessageServiceImpl implements MessageService{
             createMessage.setUser(optionalUser);
             createMessage.setOwner(existingOwner);
 
-            if(createMessage.getMessageId() == null){
+            if (createMessage.getMessageId() == null) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Id null");
@@ -113,7 +113,7 @@ public class MessageServiceImpl implements MessageService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
-        if(optionalOwner.isEmpty()){
+        if (optionalOwner.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Owner id not found");
@@ -125,25 +125,25 @@ public class MessageServiceImpl implements MessageService{
         Owner existingOwner = optionalOwner.get();
 
         Optional<User> existingUser = userRepository.findById(userId);
-        if(existingUser.isEmpty()){
+        if (existingUser.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User with id: " + userId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
-            return  responseBody;
+            return responseBody;
         }
 
         User optionalUser = existingUser.get();
 
         Optional<Message> existingMessage = messageRepository.findById(messageId);
-        if(existingMessage.isEmpty()){
+        if (existingMessage.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Message with id: " + messageId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
-            return  responseBody;
+            return responseBody;
         }
 
         Message optionalMessage = existingMessage.get();
@@ -160,7 +160,7 @@ public class MessageServiceImpl implements MessageService{
             createMessage.setUser(optionalUser);
             createMessage.setOwner(existingOwner);
 
-            if(createMessage.getMessageId() == null){
+            if (createMessage.getMessageId() == null) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Id null");
@@ -189,20 +189,20 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public ResponseBody deleteMessage(Long messageId){
+    public ResponseBody deleteMessage(Long messageId) {
 
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Message> existingMessage = messageRepository.findById(messageId);
-        if(existingMessage.isEmpty()){
+        if (existingMessage.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Message with id: " + messageId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
-            return  responseBody;
+            return responseBody;
         }
 
         Message optionalMessage = existingMessage.get();

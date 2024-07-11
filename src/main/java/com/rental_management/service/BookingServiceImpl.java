@@ -11,6 +11,7 @@ import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -90,10 +91,10 @@ public class BookingServiceImpl implements BookingService {
                 return null;
             }
 
-                booking.setCheckInDate(bookingDTO.getCheckInDate());
-                LocalDate checkIn = booking.getCheckInDate();
-                LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
-                booking.setCheckOutDate(checkOut);
+            booking.setCheckInDate(bookingDTO.getCheckInDate());
+            LocalDate checkIn = booking.getCheckInDate();
+            LocalDate checkOut = checkIn.plusDays(bookingDTO.getDay());
+            booking.setCheckOutDate(checkOut);
 
             if (optionalProperty.getPromotion() == null) {
                 double propertyPrice = optionalProperty.getOriginalPrice() * bookingDTO.getDay();
@@ -134,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
             }
 
 
-            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), booking.getCheckInDate(),booking.getCheckOutDate())) {
+            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), booking.getCheckInDate(), booking.getCheckOutDate())) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
@@ -176,12 +177,14 @@ public class BookingServiceImpl implements BookingService {
         return responseBody;
 
     }
+
     @Override
     public Booking findBookingByUserId(Long userId, Long bookingId) {
 
         return bookingRepository.findBookingByUserId(userId, bookingId);
 
     }
+
     @Override
     @Transactional
     public ResponseBody updateBookingByUserForProperty(Long userId, Long propertyId, Long bookingId, List<BookingDTO> bookingList) {
@@ -284,7 +287,7 @@ public class BookingServiceImpl implements BookingService {
                     optionalBooking.setTotalPrice(total);
                 }
             }
-            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), optionalBooking.getCheckInDate(),optionalBooking.getCheckOutDate())) {
+            if (bookingRepository.existsByPropertyIdAndOverlappingDates(optionalProperty.getPropertyId(), optionalBooking.getCheckInDate(), optionalBooking.getCheckOutDate())) {
                 ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("Booking could not be made because property with id: " + optionalProperty.getPropertyId() + " is occupied");
@@ -322,36 +325,15 @@ public class BookingServiceImpl implements BookingService {
         return responseBody;
 
     }
+
     @Override
-    public ResponseBody deleteBookings(/*Long userId, Long propertyId,*/ Long bookingId) {
+    public ResponseBody deleteBookings(Long bookingId) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errors = new ArrayList<>();
         List<SuccessDTO> successes = new ArrayList<>();
 
-        /*Optional<User> optionalUser = userRepository.findById(userId);
-        if(optionalUser.isEmpty()){
-            ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrors(true);
-            errorDTO.setMessage("User with id: " + userId + " not found");
-            errors.add(errorDTO);
-            responseBody.setError(errors);
-            return responseBody;
-        }
-        User existingUser = optionalUser.get();
-
-        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
-        if(optionalProperty.isEmpty()){
-            ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrors(true);
-            errorDTO.setMessage("Property with id: " + propertyId + " not found");
-            errors.add(errorDTO);
-            responseBody.setError(errors);
-            return responseBody;
-            }
-        Property existingProperty = optionalProperty.get();*/
-
         Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
-        if (optionalBooking.isEmpty()){
+        if (optionalBooking.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Booking with id: " + bookingId + " not found");

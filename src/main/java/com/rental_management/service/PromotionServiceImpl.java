@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class PromotionServiceImpl implements PromotionService{
+public class PromotionServiceImpl implements PromotionService {
 
     private final PromotionRepository promotionRepository;
     private final PropertyRepository propertyRepository;
@@ -52,7 +52,7 @@ public class PromotionServiceImpl implements PromotionService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
-        if(existingOwner.isEmpty()){
+        if (existingOwner.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Owner does not exist");
@@ -64,7 +64,7 @@ public class PromotionServiceImpl implements PromotionService{
         Owner optionalOwner = existingOwner.get();
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
-        if(existingProperty.isEmpty()){
+        if (existingProperty.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Property does not exist");
@@ -76,7 +76,7 @@ public class PromotionServiceImpl implements PromotionService{
         Property optionalProperty = existingProperty.get();
 
         Optional<Promotion> existingPromotion = promotionRepository.findById(promotionId);
-        if(existingPromotion.isEmpty()){
+        if (existingPromotion.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Promotion does not exist");
@@ -95,7 +95,7 @@ public class PromotionServiceImpl implements PromotionService{
         double totalAmount = optionalProperty.getOriginalPrice() - discountOffer;
         optionalProperty.setPromotionPrice(totalAmount);
 
-        if(discountOffer < 0 || discountOffer >= 100){
+        if (discountOffer < 0 || discountOffer >= 100) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Promotion discount amount is greater than the property amount");
@@ -132,7 +132,7 @@ public class PromotionServiceImpl implements PromotionService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<Owner> existingOwner = ownerRepository.findById(ownerId);
-        if(existingOwner.isEmpty()){
+        if (existingOwner.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Owner not found with id: " + ownerId);
@@ -146,16 +146,16 @@ public class PromotionServiceImpl implements PromotionService{
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
 
-            if(existingProperty.isEmpty()){
-                ErrorDTO error = new ErrorDTO();
-                error.setErrors(true);
-                error.setMessage("Property not found with id: " + propertyId);
-                errors.add(error);
-                responseBody.setError(errors);
-                return responseBody;
-            }
+        if (existingProperty.isEmpty()) {
+            ErrorDTO error = new ErrorDTO();
+            error.setErrors(true);
+            error.setMessage("Property not found with id: " + propertyId);
+            errors.add(error);
+            responseBody.setError(errors);
+            return responseBody;
+        }
 
-            Property optionalProperty = existingProperty.get();
+        Property optionalProperty = existingProperty.get();
 
         Promotion promotion = modelMapper.map(promotionDTO, Promotion.class);
         promotion.setOwner(optionalOwner);
@@ -165,7 +165,7 @@ public class PromotionServiceImpl implements PromotionService{
         double totalAmount = optionalProperty.getOriginalPrice() - discountOffer;
         optionalProperty.setPromotionPrice(totalAmount);
 
-        if(discountOffer < 0 || discountOffer >= 100){
+        if (discountOffer < 0 || discountOffer >= 100) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Promotion discount amount is greater than the property amount");
@@ -179,7 +179,7 @@ public class PromotionServiceImpl implements PromotionService{
         LocalDate endDate = startDate.plusDays(promotionDTO.getPromotionDays());
         promotion.setEndDate(endDate);
 
-        if(promotion.getStartDate().isAfter(promotion.getEndDate())){
+        if (promotion.getStartDate().isAfter(promotion.getEndDate())) {
             optionalProperty.setPromotionPrice(0);
         }
 
@@ -208,7 +208,7 @@ public class PromotionServiceImpl implements PromotionService{
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
 
-        if(existingProperty.isEmpty()){
+        if (existingProperty.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Property not found with id: " + propertyId);
@@ -220,10 +220,10 @@ public class PromotionServiceImpl implements PromotionService{
         Property optionalProperty = existingProperty.get();
 
         Optional<Promotion> optionalPromotion = promotionRepository.findById(promotionId);
-        if (optionalPromotion.isEmpty()){
+        if (optionalPromotion.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
-            errorDTO.setMessage("Promotion with id: "+ promotionId + " not found");
+            errorDTO.setMessage("Promotion with id: " + promotionId + " not found");
             errors.add(errorDTO);
             responseBody.setError(errors);
             return responseBody;

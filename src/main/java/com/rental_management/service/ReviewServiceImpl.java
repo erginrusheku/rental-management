@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ReviewServiceImpl implements ReviewService{
+public class ReviewServiceImpl implements ReviewService {
 
     private final UserRepository userRepository;
     private final PropertyRepository propertyRepository;
@@ -40,13 +40,13 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public ResponseBody createReviewByUserForProperty(Long userId, Long propertyId, List<ReviewDTO> reviewList){
+    public ResponseBody createReviewByUserForProperty(Long userId, Long propertyId, List<ReviewDTO> reviewList) {
         ResponseBody responseBody = new ResponseBody();
         List<ErrorDTO> errorList = new ArrayList<>();
         List<SuccessDTO> successList = new ArrayList<>();
 
-        Optional<User> existingUser =  userRepository.findById(userId);
-        if(existingUser.isEmpty()){
+        Optional<User> existingUser = userRepository.findById(userId);
+        if (existingUser.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User not found");
@@ -58,7 +58,7 @@ public class ReviewServiceImpl implements ReviewService{
         User optionalUser = existingUser.get();
 
         Optional<Property> existingProperty = propertyRepository.findById(propertyId);
-        if(existingProperty.isEmpty()){
+        if (existingProperty.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("Property not found");
@@ -72,8 +72,8 @@ public class ReviewServiceImpl implements ReviewService{
         List<Review> reviews = reviewList.stream().map(reviewDTO -> {
             Review review = modelMapper.map(reviewDTO, Review.class);
 
-            if(review.getComment() == null){
-                ErrorDTO  errorDTO = new ErrorDTO();
+            if (review.getComment() == null) {
+                ErrorDTO errorDTO = new ErrorDTO();
                 errorDTO.setErrors(true);
                 errorDTO.setMessage("You can't create a review without a comment");
                 errorList.add(errorDTO);
@@ -111,7 +111,7 @@ public class ReviewServiceImpl implements ReviewService{
         List<ErrorDTO> errors = new ArrayList<>();
 
         Optional<User> optionalUser = userRepository.findById(userId);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("User could not be found");
@@ -123,7 +123,7 @@ public class ReviewServiceImpl implements ReviewService{
         User existingUser = optionalUser.get();
 
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
-        if(optionalProperty.isEmpty()){
+        if (optionalProperty.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Property could not be found");
@@ -135,7 +135,7 @@ public class ReviewServiceImpl implements ReviewService{
         Property existingProperty = optionalProperty.get();
 
         Optional<Review> optionalReview = reviewRepository.findById(reviewId);
-        if(optionalReview.isEmpty()){
+        if (optionalReview.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Property could not be found");
@@ -147,7 +147,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review existingReview = optionalReview.get();
 
         List<Review> reviews = reviewList.stream().map(reviewDTO -> {
-            if(existingReview.getComment() == null){
+            if (existingReview.getComment() == null) {
                 ErrorDTO error = new ErrorDTO();
                 error.setErrors(true);
                 error.setMessage("You can't create a review without a comment");
@@ -173,22 +173,22 @@ public class ReviewServiceImpl implements ReviewService{
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
 
-         userRepository.save(existingUser);
+        userRepository.save(existingUser);
 
-         propertyRepository.save(existingProperty);
+        propertyRepository.save(existingProperty);
 
-         reviewRepository.saveAll(reviews);
+        reviewRepository.saveAll(reviews);
 
         return responseBody;
     }
 
-    public ResponseBody deleteReview( Long reviewId){
+    public ResponseBody deleteReview(Long reviewId) {
         ResponseBody responseBody = new ResponseBody();
         List<SuccessDTO> successes = new ArrayList<>();
         List<ErrorDTO> errors = new ArrayList<>();
 
         Optional<Review> optionalReview = reviewRepository.findById(reviewId);
-        if(optionalReview.isEmpty()){
+        if (optionalReview.isEmpty()) {
             ErrorDTO error = new ErrorDTO();
             error.setErrors(true);
             error.setMessage("Property could not be found");

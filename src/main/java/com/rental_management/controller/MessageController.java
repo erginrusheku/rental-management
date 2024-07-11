@@ -20,19 +20,19 @@ public class MessageController {
     }
 
     @PostMapping("/createMessage")
-    public ResponseEntity<ResponseBody> createMessage(@RequestParam Long ownerId, @RequestParam Long userId, @RequestBody List<MessageDTO> messageList){
+    public ResponseEntity<ResponseBody> createMessage(@RequestParam Long ownerId, @RequestParam Long userId, @RequestBody List<MessageDTO> messageList) {
         ResponseBody createMessage = messageService.createMessage(ownerId, userId, messageList);
         return new ResponseEntity<>(createMessage, HttpStatus.CREATED);
     }
 
     @PutMapping("/updateMessage")
-    public ResponseEntity<ResponseBody> updateMessage(@RequestParam Long ownerId,@RequestParam Long userId,@RequestParam Long messageId,@RequestBody List<MessageDTO> messageList){
+    public ResponseEntity<ResponseBody> updateMessage(@RequestParam Long ownerId, @RequestParam Long userId, @RequestParam Long messageId, @RequestBody List<MessageDTO> messageList) {
         ResponseBody updateMessage = messageService.updateMessage(ownerId, userId, messageId, messageList);
         return new ResponseEntity<>(updateMessage, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteMessage")
-   ResponseEntity<ResponseBody> deleteMessage( @RequestParam Long messageId){
+    ResponseEntity<ResponseBody> deleteMessage(@RequestParam Long messageId) {
         ResponseBody deleteMessage = messageService.deleteMessage(messageId);
         return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
     }

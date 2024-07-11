@@ -34,8 +34,8 @@ public class PropertyController {
 
     @DeleteMapping("/deleteProperty")
     public ResponseEntity<ResponseBody> deleteProperty(@RequestParam Long propertyId) {
-       ResponseBody deleteProperty = propertyService.deleteProperty(propertyId);
-       return new ResponseEntity<>(deleteProperty, HttpStatus.OK);
+        ResponseBody deleteProperty = propertyService.deleteProperty(propertyId);
+        return new ResponseEntity<>(deleteProperty, HttpStatus.OK);
     }
 
     @PostMapping("/createProperty")
@@ -45,20 +45,20 @@ public class PropertyController {
     }
 
     @GetMapping("/{ownerId}/{propertyId}")
-    ResponseEntity<Property> findPropertyByOwnerId(@PathVariable Long ownerId,@PathVariable Long propertyId){
+    ResponseEntity<Property> findPropertyByOwnerId(@PathVariable Long ownerId, @PathVariable Long propertyId) {
         Property getPropertyFromOwnerId = propertyService.findPropertyByOwnerId(ownerId, propertyId);
         return new ResponseEntity<>(getPropertyFromOwnerId, HttpStatus.OK);
     }
 
     @GetMapping("/propertyPromotion/{propertyId}/{promotionId}")
-    ResponseEntity<Property> findPropertyByPromotionId(@PathVariable Long propertyId,@PathVariable Long promotionId){
+    ResponseEntity<Property> findPropertyByPromotionId(@PathVariable Long propertyId, @PathVariable Long promotionId) {
         Property getPropertyFromPromotionId = propertyService.findPromotionByPropertyId(propertyId, promotionId);
         return new ResponseEntity<>(getPropertyFromPromotionId, HttpStatus.OK);
     }
 
     @PutMapping("/updateProperty")
-    public ResponseEntity<ResponseBody> updatePropertyByOwner(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestBody List<PropertyDTO> propertyList){
-        ResponseBody updateProperty = propertyService.updatePropertyByOwner(ownerId,propertyId,propertyList);
+    public ResponseEntity<ResponseBody> updatePropertyByOwner(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestBody List<PropertyDTO> propertyList) {
+        ResponseBody updateProperty = propertyService.updatePropertyByOwner(ownerId, propertyId, propertyList);
         return new ResponseEntity<>(updateProperty, HttpStatus.OK);
     }
 }

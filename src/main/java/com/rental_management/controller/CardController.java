@@ -20,13 +20,13 @@ public class CardController {
     }
 
     @GetMapping("/card")
-    ResponseEntity<CardDTO> getCardById(@RequestParam Long cardId){
+    ResponseEntity<CardDTO> getCardById(@RequestParam Long cardId) {
         CardDTO cardIds = cardService.getCardById(cardId);
         return new ResponseEntity<>(cardIds, HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<CardDTO>> getAllCards(){
+    ResponseEntity<List<CardDTO>> getAllCards() {
         List<CardDTO> cards = cardService.getAllCards();
         return new ResponseEntity<>(cards, HttpStatus.OK);
     }
@@ -38,14 +38,14 @@ public class CardController {
     }
 
     @PutMapping("/updateCard")
-    public ResponseEntity<ResponseBody> updateCardByUser(@RequestParam Long userId, @RequestParam Long cardId, @RequestBody List<CardDTO> cardList){
-        ResponseBody updateCard = cardService.updateCardByUser(userId,cardId,cardList);
+    public ResponseEntity<ResponseBody> updateCardByUser(@RequestParam Long userId, @RequestParam Long cardId, @RequestBody List<CardDTO> cardList) {
+        ResponseBody updateCard = cardService.updateCardByUser(userId, cardId, cardList);
         return new ResponseEntity<>(updateCard, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteCard")
-    public ResponseEntity<ResponseBody> deleteCardByUser(@RequestParam Long userId, @RequestParam Long cardId){
-        ResponseBody deleteCard = cardService.deleteCardByUser(userId,cardId);
+    public ResponseEntity<ResponseBody> deleteCardByUser(@RequestParam Long userId, @RequestParam Long cardId) {
+        ResponseBody deleteCard = cardService.deleteCardByUser(userId, cardId);
         return new ResponseEntity<>(deleteCard, HttpStatus.OK);
     }
 }

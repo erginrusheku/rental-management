@@ -7,6 +7,7 @@ import com.rental_management.repo.CardRepository;
 import com.rental_management.repo.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -14,14 +15,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CardServiceImpl implements CardService{
+public class CardServiceImpl implements CardService {
 
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
 
-    public CardServiceImpl(UserRepository userRepository,
-                           CardRepository cardRepository, ModelMapper modelMapper) {
+    public CardServiceImpl(UserRepository userRepository, CardRepository cardRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.modelMapper = modelMapper;
@@ -55,42 +55,38 @@ public class CardServiceImpl implements CardService{
 
         User user = existingUser.get();
 
-        List<Card> createdCards = cardDTOList.stream()
-                .map(cardDTO -> {
-                    if(cardRepository.existsByCardNumber(cardDTO.getCardNumber())){
-                        ErrorDTO errorDTO = new ErrorDTO();
-                        errorDTO.setErrors(true);
-                        errorDTO.setMessage("The same card number cannot be used twice");
-                        errors.add(errorDTO);
-                        responseBody.setError(errors);
-                        return null;
-                    }
-                    else {
-                        Card card = modelMapper.map(cardDTO, Card.class);
+        List<Card> createdCards = cardDTOList.stream().map(cardDTO -> {
+            if (cardRepository.existsByCardNumber(cardDTO.getCardNumber())) {
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("The same card number cannot be used twice");
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            } else {
+                Card card = modelMapper.map(cardDTO, Card.class);
 
-                        card.setCreationDate(Date.from(Instant.now()));
+                card.setCreationDate(Date.from(Instant.now()));
 
-                        LocalDate cardCreationDate = card.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                        LocalDate cardExpirationDate = cardCreationDate.plusYears(3);
+                LocalDate cardCreationDate = card.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate cardExpirationDate = cardCreationDate.plusYears(3);
 
-                        Instant instant = cardExpirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-                        card.setExpirationDate(Date.from(instant));
+                Instant instant = cardExpirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                card.setExpirationDate(Date.from(instant));
 
-                        Card createdCard = cardRepository.save(card);
-                        createdCard.setUser(user);
-                        user.getCards().add(createdCard);
+                Card createdCard = cardRepository.save(card);
+                createdCard.setUser(user);
+                user.getCards().add(createdCard);
 
-                        String userName = user.getUserName();
-                        card.setCardholderName(userName);
-                        SuccessDTO success = new SuccessDTO();
-                        success.setSuccess(true);
-                        success.setMessage("Card created successfully!");
-                        successes.add(success);
-                        return createdCard;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                String userName = user.getUserName();
+                card.setCardholderName(userName);
+                SuccessDTO success = new SuccessDTO();
+                success.setSuccess(true);
+                success.setMessage("Card created successfully!");
+                successes.add(success);
+                return createdCard;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
         userRepository.save(user);
 
@@ -111,7 +107,7 @@ public class CardServiceImpl implements CardService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<User> existingUser = userRepository.findById(userId);
-        if(existingUser.isEmpty()){
+        if (existingUser.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User with id: " + userId + " not found");
@@ -137,23 +133,23 @@ public class CardServiceImpl implements CardService{
 
         List<Card> cards = cardList.stream().map(cardDTO1 -> {
 
-                    if(cardRepository.existsByCardNumber(cardDTO1.getCardNumber()) || cardRepository.existsByCardType(cardDTO1.getCardType())){
-                        ErrorDTO errorDTO = new ErrorDTO();
-                        errorDTO.setErrors(true);
-                        errorDTO.setMessage("The same card number and card type cannot be used twice");
-                        errors.add(errorDTO);
-                        responseBody.setError(errors);
-                        return null;
-                    }
+            if (cardRepository.existsByCardNumber(cardDTO1.getCardNumber()) || cardRepository.existsByCardType(cardDTO1.getCardType())) {
+                ErrorDTO errorDTO = new ErrorDTO();
+                errorDTO.setErrors(true);
+                errorDTO.setMessage("The same card number and card type cannot be used twice");
+                errors.add(errorDTO);
+                responseBody.setError(errors);
+                return null;
+            }
 
-                    existingCard.setCreationDate(Date.from(Instant.now()));
+            existingCard.setCreationDate(Date.from(Instant.now()));
 
             LocalDate cardCreationDate = existingCard.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate cardExpirationDate = cardCreationDate.plusYears(3);
             Instant instant = cardExpirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
             existingCard.setExpirationDate(Date.from(instant));
 
-            modelMapper.map(cardDTO1,existingCard);
+            modelMapper.map(cardDTO1, existingCard);
 
             Card savedCard = cardRepository.save(existingCard);
             savedCard.setUser(optionalUser);
@@ -167,8 +163,7 @@ public class CardServiceImpl implements CardService{
 
             return savedCard;
 
-        }).filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
 
         userRepository.save(optionalUser);
@@ -178,7 +173,7 @@ public class CardServiceImpl implements CardService{
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
-      return responseBody;
+        return responseBody;
 
     }
 
@@ -189,7 +184,7 @@ public class CardServiceImpl implements CardService{
         List<SuccessDTO> successes = new ArrayList<>();
 
         Optional<User> optionalUser = userRepository.findById(userId);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO();
             errorDTO.setErrors(true);
             errorDTO.setMessage("User with id: " + userId + " not found");
@@ -224,6 +219,6 @@ public class CardServiceImpl implements CardService{
         responseBody.setError(errors);
         responseBody.setSuccess(successes);
 
-     return responseBody;
+        return responseBody;
     }
 }
