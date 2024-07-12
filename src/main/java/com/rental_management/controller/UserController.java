@@ -20,32 +20,32 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/userId")
-    ResponseEntity<ResponseBody> getUserById(@RequestParam Long userId) {
+    @GetMapping("/getUser/{userId}")
+    ResponseEntity<ResponseBody> getUserById(@PathVariable Long userId) {
         ResponseBody userIds = userService.getUserById(userId);
         return new ResponseEntity<>(userIds, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allUsers")
     ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/createUser")
     ResponseEntity<ResponseBody> createUser(@RequestBody UserDTO userDTO) {
         ResponseBody createdUser = userService.createUser(userDTO);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateUser")
-    ResponseEntity<ResponseBody> updateUser(@RequestParam Long userId, @RequestBody UserDTO userDTO) {
+    @PutMapping("/updateUser/{userId}")
+    ResponseEntity<ResponseBody> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
         ResponseBody updatedUser = userService.updateUser(userId, userDTO);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteUser")
-    ResponseEntity<ResponseBody> deleteUser(@RequestParam Long userId) {
+    @DeleteMapping("/deleteUser/{userId}")
+    ResponseEntity<ResponseBody> deleteUser(@PathVariable Long userId) {
         ResponseBody deleteUser = userService.deleteUser(userId);
         return new ResponseEntity<>(deleteUser, HttpStatus.OK);
     }

@@ -19,32 +19,32 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @GetMapping("/card")
-    ResponseEntity<CardDTO> getCardById(@RequestParam Long cardId) {
+    @GetMapping("/card/{cardId}")
+    ResponseEntity<CardDTO> getCardById(@PathVariable Long cardId) {
         CardDTO cardIds = cardService.getCardById(cardId);
         return new ResponseEntity<>(cardIds, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allCards")
     ResponseEntity<List<CardDTO>> getAllCards() {
         List<CardDTO> cards = cardService.getAllCards();
         return new ResponseEntity<>(cards, HttpStatus.OK);
     }
 
-    @PostMapping("/createCard")
-    public ResponseEntity<ResponseBody> createCardByUser(@RequestParam Long userId, @RequestBody List<CardDTO> cardDTOList) {
+    @PostMapping("/createCard/{userId}")
+    public ResponseEntity<ResponseBody> createCardByUser(@PathVariable Long userId, @RequestBody List<CardDTO> cardDTOList) {
         ResponseBody createCard = cardService.createCardByUser(userId, cardDTOList);
         return new ResponseEntity<>(createCard, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateCard")
-    public ResponseEntity<ResponseBody> updateCardByUser(@RequestParam Long userId, @RequestParam Long cardId, @RequestBody List<CardDTO> cardList) {
+    @PutMapping("/updateCard/{userId}/{cardId}")
+    public ResponseEntity<ResponseBody> updateCardByUser(@PathVariable Long userId, @PathVariable Long cardId, @RequestBody List<CardDTO> cardList) {
         ResponseBody updateCard = cardService.updateCardByUser(userId, cardId, cardList);
         return new ResponseEntity<>(updateCard, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteCard")
-    public ResponseEntity<ResponseBody> deleteCardByUser(@RequestParam Long userId, @RequestParam Long cardId) {
+    @DeleteMapping("/deleteCard/{userId}/{cardId}")
+    public ResponseEntity<ResponseBody> deleteCardByUser(@PathVariable Long userId, @PathVariable Long cardId) {
         ResponseBody deleteCard = cardService.deleteCardByUser(userId, cardId);
         return new ResponseEntity<>(deleteCard, HttpStatus.OK);
     }

@@ -20,26 +20,26 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allBooking")
     ResponseEntity<List<BookingDTO>> getAllBookings() {
         List<BookingDTO> bookingList = bookingService.getAllBookings();
         return new ResponseEntity<>(bookingList, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/createBooking")
     ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) {
         BookingDTO booking = bookingService.createBooking(bookingDTO);
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
     }
 
-    @GetMapping("/bookingId")
-    ResponseEntity<BookingDTO> getById(@RequestParam Long bookingId) {
+    @GetMapping("/bookingId/{bookingId}")
+    ResponseEntity<BookingDTO> getById(@PathVariable Long bookingId) {
         BookingDTO bookingIds = bookingService.getById(bookingId);
         return new ResponseEntity<>(bookingIds, HttpStatus.OK);
     }
 
-    @PostMapping("/createBooking")
-    public ResponseEntity<ResponseBody> createBookingByUserForProperty(@RequestParam Long userId, @RequestParam Long propertyId, @RequestBody List<BookingDTO> bookingList) {
+    @PostMapping("/createBooking/{userId}/{propertyId}")
+    public ResponseEntity<ResponseBody> createBookingByUserForProperty(@PathVariable Long userId, @PathVariable Long propertyId, @RequestBody List<BookingDTO> bookingList) {
         ResponseBody createBooking = bookingService.createBookingByUserForProperty(userId, propertyId, bookingList);
         return new ResponseEntity<>(createBooking, HttpStatus.CREATED);
     }
@@ -50,14 +50,14 @@ public class BookingController {
         return new ResponseEntity<>(getBookingByUserId, HttpStatus.OK);
     }
 
-    @PutMapping("/updateBookings")
-    ResponseEntity<ResponseBody> updateBookingByUserForProperty(@RequestParam Long userId, @RequestParam Long propertyId, @RequestParam Long bookingId, @RequestBody List<BookingDTO> bookingDTO) {
+    @PutMapping("/updateBookings/{userId}/{propertyId}/{bookingId}")
+    ResponseEntity<ResponseBody> updateBookingByUserForProperty(@PathVariable Long userId, @PathVariable Long propertyId, @PathVariable Long bookingId, @RequestBody List<BookingDTO> bookingDTO) {
         ResponseBody bookingAndId = bookingService.updateBookingByUserForProperty(userId, propertyId, bookingId, bookingDTO);
         return new ResponseEntity<>(bookingAndId, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteBooking")
-    public ResponseEntity<ResponseBody> deleteBookings(/*@RequestParam Long userId,@RequestParam Long propertyId,*/@RequestParam Long bookingId) {
+    @DeleteMapping("/deleteBooking/{bookingId}")
+    public ResponseEntity<ResponseBody> deleteBookings(@PathVariable Long bookingId) {
         ResponseBody deleteBooking = bookingService.deleteBookings(bookingId);
         return new ResponseEntity<>(deleteBooking, HttpStatus.OK);
     }

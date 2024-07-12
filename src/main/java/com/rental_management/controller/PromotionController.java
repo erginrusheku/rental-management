@@ -19,32 +19,32 @@ public class PromotionController {
         this.promotionService = promotionService;
     }
 
-    @GetMapping("/promotionId")
-    ResponseEntity<PromotionDTO> getPromotionById(@RequestParam Long promotionId) {
+    @GetMapping("/promotionId/{promotionId}")
+    ResponseEntity<PromotionDTO> getPromotionById(@PathVariable Long promotionId) {
         PromotionDTO promotionIds = promotionService.getPromotionById(promotionId);
         return new ResponseEntity<>(promotionIds, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allPromotions")
     ResponseEntity<List<PromotionDTO>> getAllPromotions() {
         List<PromotionDTO> promotions = promotionService.getAllPromotions();
         return new ResponseEntity<>(promotions, HttpStatus.OK);
     }
 
-    @PutMapping("/updatePromotion")
-    ResponseEntity<ResponseBody> updatePromotion(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestParam Long promotionId, @RequestBody PromotionDTO promotionDTO) {
+    @PutMapping("/updatePromotion/{ownerId}/{propertyId}/{promotionId}")
+    ResponseEntity<ResponseBody> updatePromotion(@PathVariable Long ownerId, @PathVariable Long propertyId, @PathVariable Long promotionId, @RequestBody PromotionDTO promotionDTO) {
         ResponseBody updatedPromotion = promotionService.updatePromotionByOwnerForProperties(ownerId, propertyId, promotionId, promotionDTO);
         return new ResponseEntity<>(updatedPromotion, HttpStatus.OK);
     }
 
-    @PostMapping("/createPromotion")
-    ResponseEntity<ResponseBody> createPromotionByOwnerForProperties(@RequestParam Long ownerId, @RequestParam Long propertyId, @RequestBody PromotionDTO promotionDTO) {
+    @PostMapping("/createPromotion/{ownerId}/{propertyId}")
+    ResponseEntity<ResponseBody> createPromotionByOwnerForProperties(@PathVariable Long ownerId, @PathVariable Long propertyId, @RequestBody PromotionDTO promotionDTO) {
         ResponseBody createPromotion = promotionService.createPromotionByOwnerForProperties(ownerId, propertyId, promotionDTO);
         return new ResponseEntity<>(createPromotion, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/deletePromotion")
-    ResponseEntity<ResponseBody> deletePromotion(@RequestParam Long propertyId, @RequestParam Long promotionId) {
+    @DeleteMapping("/deletePromotion/{propertyId}/{promotionId}")
+    ResponseEntity<ResponseBody> deletePromotion(@PathVariable Long propertyId, @PathVariable Long promotionId) {
         ResponseBody deletePromotion = promotionService.deletePromotion(propertyId, promotionId);
         return new ResponseEntity<>(deletePromotion, HttpStatus.OK);
     }
