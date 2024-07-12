@@ -20,7 +20,7 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/allBooking")
+    @GetMapping("/allBookings")
     ResponseEntity<List<BookingDTO>> getAllBookings() {
         List<BookingDTO> bookingList = bookingService.getAllBookings();
         return new ResponseEntity<>(bookingList, HttpStatus.OK);
@@ -32,7 +32,7 @@ public class BookingController {
         return new ResponseEntity<>(booking, HttpStatus.CREATED);
     }
 
-    @GetMapping("/bookingId/{bookingId}")
+    @GetMapping("/getBooking/{bookingId}")
     ResponseEntity<BookingDTO> getById(@PathVariable Long bookingId) {
         BookingDTO bookingIds = bookingService.getById(bookingId);
         return new ResponseEntity<>(bookingIds, HttpStatus.OK);
@@ -50,7 +50,7 @@ public class BookingController {
         return new ResponseEntity<>(getBookingByUserId, HttpStatus.OK);
     }
 
-    @PutMapping("/updateBookings/{userId}/{propertyId}/{bookingId}")
+    @PutMapping("/updateBooking/{userId}/{propertyId}/{bookingId}")
     ResponseEntity<ResponseBody> updateBookingByUserForProperty(@PathVariable Long userId, @PathVariable Long propertyId, @PathVariable Long bookingId, @RequestBody List<BookingDTO> bookingDTO) {
         ResponseBody bookingAndId = bookingService.updateBookingByUserForProperty(userId, propertyId, bookingId, bookingDTO);
         return new ResponseEntity<>(bookingAndId, HttpStatus.OK);

@@ -19,7 +19,7 @@ public class PromotionController {
         this.promotionService = promotionService;
     }
 
-    @GetMapping("/promotionId/{promotionId}")
+    @GetMapping("/getPromotion/{promotionId}")
     ResponseEntity<PromotionDTO> getPromotionById(@PathVariable Long promotionId) {
         PromotionDTO promotionIds = promotionService.getPromotionById(promotionId);
         return new ResponseEntity<>(promotionIds, HttpStatus.OK);
