@@ -29,6 +29,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth ->
                 auth
                         .requestMatchers("api/auth/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll() // OpenAPI docs
+                        .requestMatchers("/swagger-ui.html").permitAll() // Swagger UI
+                        .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("api/owners/**").hasRole("ADMIN")
                         .requestMatchers("api/properties/**").hasRole("ADMIN")
                         .requestMatchers("api/promotions/**").hasRole("ADMIN")
