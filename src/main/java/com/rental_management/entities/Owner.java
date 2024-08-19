@@ -17,6 +17,4 @@ public class Owner {
     @Column(unique = true)
     private int phoneNumber;
 
-    private String password;
-
 }
