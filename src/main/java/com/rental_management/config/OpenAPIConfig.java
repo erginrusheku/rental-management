@@ -15,7 +15,7 @@ public class OpenAPIConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Your API")
+                        .title("Rental Management API")
                         .version("1.0.0")
                         .description("API documentation with token authentication"))
                 .components(new Components()
