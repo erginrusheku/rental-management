@@ -18,6 +18,7 @@ public class User {
     private String userLastname;
     @Column(unique = true, length = 10)
     private String personalNumber;
+    private String password;
     private String email;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)

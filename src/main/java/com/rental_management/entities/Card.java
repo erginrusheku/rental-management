@@ -13,7 +13,8 @@ import java.util.Date;
 @Setter
 @Entity
 public class Card {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cardId;
 
     private String cardholderName;
